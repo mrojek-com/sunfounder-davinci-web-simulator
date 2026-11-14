@@ -380,7 +380,10 @@
       }
       if (this.dom.btnStop) {
         this.dom.btnStop.onclick = () => {
-          if (global.PythonRunner) global.PythonRunner.stop();
+          if (global.PythonRunner) {
+            this.logTerminal('warn', '[PyRunner] Stop requested by user...');
+            global.PythonRunner.stop();
+          }
         };
       }
 
@@ -477,6 +480,12 @@
             this.dom.btnPause.textContent = 'Pause';
           }
           if (this.dom.btnStop) this.dom.btnStop.disabled = false;
+        } else if (state === 'stopping') {
+          this.dom.runStatusBadge.textContent = 'STOPPING...';
+          this.dom.runStatusBadge.className = 'status-badge stopping';
+          if (this.dom.btnRun) this.dom.btnRun.disabled = true;
+          if (this.dom.btnPause) this.dom.btnPause.disabled = true;
+          if (this.dom.btnStop) this.dom.btnStop.disabled = true;
         } else if (state === 'paused') {
           this.dom.runStatusBadge.textContent = 'PAUSED';
           this.dom.runStatusBadge.className = 'status-badge paused';

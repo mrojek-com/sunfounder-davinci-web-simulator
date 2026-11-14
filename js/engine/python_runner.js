@@ -93,6 +93,24 @@
     });
   }
 
+  // Global prototype helpers for Python Array & Object compatibility
+  if (typeof Array !== 'undefined') {
+    if (!Array.prototype.append) {
+      Array.prototype.append = function(item) { this.push(item); return this; };
+    }
+    if (!Array.prototype.index) {
+      Array.prototype.index = function(item) { return this.indexOf(item); };
+    }
+  }
+  if (typeof Object !== 'undefined' && !Object.prototype.keys) {
+    Object.defineProperty(Object.prototype, 'keys', {
+      value: function() { return Object.keys(this); },
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+  }
+
   class PythonSimulatorRunner {
     constructor() {
       this.isRunning = false;
@@ -103,6 +121,7 @@
       this.stateCallbacks = [];
       this.speedMultiplier = 1.0;
       this.startTime = Date.now();
+      this.activeTimers = [];
     }
 
     onOutput(fn) {
@@ -152,10 +171,18 @@
       const jsLines = [];
       const indentStack = [0];
 
-      // Pass 1: Collect all 'global' variable declarations and check main block
+      // Pass 1: Collect globals, main block, function calls, and async functions
       const globalVars = new Set();
+      const definedClasses = new Set();
       let hasMainBlock = false;
-      for (const line of rawLines) {
+      let hasExplicitSetupCall = false;
+      let hasExplicitMainCall = false;
+      let hasExplicitLoopCall = false;
+      const allFunctions = new Set();
+      const asyncFunctions = new Set(['sleep', 'pause', 'wait_for_press', 'beep', 'play', 'loop', 'main', 'destroy']);
+
+      for (let i = 0; i < rawLines.length; i++) {
+        const line = rawLines[i];
         const trimmed = line.trim();
         const gMatch = trimmed.match(/^global\s+([a-zA-Z0-9_,\s]+)/);
         if (gMatch) {
@@ -164,13 +191,52 @@
         if (/if\s+__name__\s*==\s*['"]__main__['"]/.test(trimmed)) {
           hasMainBlock = true;
         }
+
+        const classMatch = trimmed.match(/^class\s+([a-zA-Z0-9_]+)/);
+        if (classMatch) {
+          definedClasses.add(classMatch[1]);
+        }
+
+        const defMatch = trimmed.match(/^def\s+([a-zA-Z0-9_]+)\s*\(/);
+        if (defMatch) {
+          allFunctions.add(defMatch[1]);
+        } else {
+          if (/(?<!def\s+)\bsetup\s*\(/.test(trimmed)) hasExplicitSetupCall = true;
+          if (/(?<!def\s+)\bmain\s*\(/.test(trimmed)) hasExplicitMainCall = true;
+          if (/(?<!def\s+)\bloop\s*\(/.test(trimmed)) hasExplicitLoopCall = true;
+        }
+      }
+
+      // Expand asyncFunctions: any function containing sleep/pause/while/for or calling another async function
+      for (let pass = 0; pass < 5; pass++) {
+        for (let i = 0; i < rawLines.length; i++) {
+          const defMatch = rawLines[i].trim().match(/^def\s+([a-zA-Z0-9_]+)\s*\(/);
+          if (!defMatch) continue;
+          const fnName = defMatch[1];
+          const fnIndent = (rawLines[i].match(/^(\s*)/)[1] || '').length;
+          for (let j = i + 1; j < rawLines.length; j++) {
+            const nextIndent = (rawLines[j].match(/^(\s*)/)[1] || '').length;
+            if (rawLines[j].trim() && nextIndent <= fnIndent) break;
+            const lineCode = rawLines[j];
+            if (/sleep|pause|await|wait_for_press|while\b|for\b/.test(lineCode)) {
+              asyncFunctions.add(fnName);
+              break;
+            }
+            for (const afn of asyncFunctions) {
+              if (new RegExp(`(?<!def\\s+)\\b${afn}\\s*\\(`).test(lineCode)) {
+                asyncFunctions.add(fnName);
+                break;
+              }
+            }
+          }
+        }
       }
 
       // Base shims that are always available
       const baseImports = [
         'GPIO', 'ADC0834', 'LCD1602', 'time', 'math', 'random', 'print',
         'sleep', 'len', 'str', 'int', 'float', 'abs', 'min', 'max', 'round',
-        'sprintf', '__iter', 'pause', 'spidev'
+        'sprintf', '__iter', 'pause', 'spidev', 'threading', 'enumerate', 'list'
       ];
       const gzMatches = pyCode.match(/from\s+gpiozero\s+import\s+([a-zA-Z0-9_, \t]+)/g);
       const gzImports = new Set();
@@ -321,18 +387,7 @@
             if (pName) declaredVars.add(pName);
           });
 
-          // Check if function needs to be async (contains sleep, time.sleep, pause, or loop)
-          let needsAsync = false;
-          const fnIndent = currentIndent;
-          for (let j = i + 1; j < rawLines.length; j++) {
-            const nextIndent = (rawLines[j].match(/^(\s*)/)[1] || '').replace(/\t/g, '    ').length;
-            if (rawLines[j].trim() && nextIndent <= fnIndent) break;
-            if (/sleep|pause|await/.test(rawLines[j])) {
-              needsAsync = true;
-              break;
-            }
-          }
-
+          const needsAsync = asyncFunctions.has(fnName);
           const asyncPrefix = needsAsync ? 'async ' : '';
 
           if (isInsideClass) {
@@ -373,6 +428,7 @@
           cond = cond === 'true' || cond === '1' ? 'true' : cond;
           jsLines.push(' '.repeat(currentIndent) + `while (${cond}) {`);
           jsLines.push(' '.repeat(currentIndent + 2) + 'if (__env.isCancelled()) throw new Error("KEYBOARD_INTERRUPT");');
+          jsLines.push(' '.repeat(currentIndent + 2) + 'await __env.yieldCheck();');
           indentStack.push(currentIndent + 4);
           lastBlock = 'while';
           continue;
@@ -388,6 +444,7 @@
           else if (args.length === 3) { init = args[0]; limit = args[1]; step = args[2]; }
           jsLines.push(' '.repeat(currentIndent) + `for (let ${v} = ${init}; ${v} < ${limit}; ${v} += ${step}) {`);
           jsLines.push(' '.repeat(currentIndent + 2) + 'if (__env.isCancelled()) throw new Error("KEYBOARD_INTERRUPT");');
+          jsLines.push(' '.repeat(currentIndent + 2) + 'await __env.yieldCheck();');
           indentStack.push(currentIndent + 4);
           continue;
         }
@@ -400,6 +457,7 @@
           if (v.includes(',')) v = '[' + v.replace(/[\(\)]/g, '') + ']';
           jsLines.push(' '.repeat(currentIndent) + `for (let ${v} of __iter(${target})) {`);
           jsLines.push(' '.repeat(currentIndent + 2) + 'if (__env.isCancelled()) throw new Error("KEYBOARD_INTERRUPT");');
+          jsLines.push(' '.repeat(currentIndent + 2) + 'await __env.yieldCheck();');
           indentStack.push(currentIndent + 4);
           continue;
         }
@@ -452,9 +510,24 @@
           continue;
         }
 
-        code = code.replace(/\btime\.sleep\s*\((.*?)\)/g, 'await sleep($1)');
-        code = code.replace(/\bsleep\s*\((.*?)\)/g, 'await sleep($1)');
+        code = code.replace(/(?<!\bawait\s+)\b(?:time\.)?sleep\s*\((.*?)\)/g, 'await sleep($1)');
+        code = code.replace(/(?<!\bawait\s+)\bpause\s*\(\)/g, 'await pause()');
         code = code.replace(/\bprint\s*\((.*?)\)/g, 'print($1)');
+
+        // Prepend await to any invocations of identified async functions
+        for (const afn of asyncFunctions) {
+          const fnCallRegex = new RegExp(`(?<!\\bawait\\s+)(?<!\\bdef\\s+)(?<!\\bfunction\\s+)(?<!\\.)\\b${afn}\\s*\\(`, 'g');
+          code = code.replace(fnCallRegex, `await ${afn}(`);
+        }
+
+        // Instantiate user-defined classes with 'new' if omitted
+        for (const cls of definedClasses) {
+          const clsRegex = new RegExp(`(?<!\\bnew\\s+)(?<!\\bclass\\s+)\\b${cls}\\s*\\(`, 'g');
+          code = code.replace(clsRegex, `new ${cls}(`);
+        }
+
+        // Safe timer cancel for uninitialized timer handles
+        code = code.replace(/([a-zA-Z0-9_]+)\.cancel\s*\(\)/g, '($1 && typeof $1.cancel === "function" && $1.cancel())');
 
         // Track bracket delta for multiline literals
         bracketDepth += getBracketDelta(code);
@@ -492,10 +565,18 @@
 
       if (!hasMainBlock) {
         jsLines.push('');
-        jsLines.push('// Auto-execute setup and main if declared');
-        jsLines.push('if (typeof setup === "function") await setup();');
-        jsLines.push('if (typeof main === "function") await main();');
-        jsLines.push('else if (typeof loop === "function") await loop();');
+        jsLines.push('// Auto-execute setup and main/loop if declared and not already called');
+        if (!hasExplicitSetupCall) {
+          jsLines.push('if (typeof setup === "function") await setup();');
+        }
+        if (!hasExplicitMainCall && !hasExplicitLoopCall) {
+          jsLines.push('if (typeof main === "function") await main();');
+          jsLines.push('else if (typeof loop === "function") await loop();');
+        } else if (!hasExplicitMainCall) {
+          jsLines.push('if (typeof main === "function") await main();');
+        } else if (!hasExplicitLoopCall) {
+          jsLines.push('if (typeof loop === "function") await loop();');
+        }
       }
 
       return jsLines.join('\n');
@@ -522,6 +603,7 @@
 
       const self = this;
       let modeConfigured = false;
+      let lastYield = Date.now();
 
       // Auto-configure mode when gpiozero devices are instantiated
       const ensureBcmMode = () => {
@@ -939,6 +1021,65 @@
           }
         },
 
+        threading: {
+          Timer: function(interval, fn, args) {
+            if (!(this instanceof env.threading.Timer)) return new env.threading.Timer(interval, fn, args);
+            this.interval = interval;
+            this.fn = fn;
+            this.args = Array.isArray(args) ? args : (args ? [args] : []);
+            this.timerId = null;
+            this.start = () => {
+              const ms = Math.max(1, (this.interval * 1000) / (self.speedMultiplier || 1.0));
+              this.timerId = setTimeout(async () => {
+                if (!self.stopRequested && typeof this.fn === 'function') {
+                  try {
+                    await this.fn(...this.args);
+                  } catch (e) {
+                    if (e.message !== 'KEYBOARD_INTERRUPT' && !self.stopRequested) {
+                      console.error('[VirtualTimer Error]', e);
+                    }
+                  }
+                }
+              }, ms);
+              self.activeTimers.push(this.timerId);
+              return this;
+            };
+            this.cancel = () => {
+              if (this.timerId) {
+                clearTimeout(this.timerId);
+                this.timerId = null;
+              }
+            };
+          },
+          Thread: function(target, args) {
+            if (!(this instanceof env.threading.Thread)) return new env.threading.Thread(target, args);
+            let fn = target;
+            let callArgs = args || [];
+            if (typeof target === 'object' && target !== null && typeof target.target === 'function') {
+              fn = target.target;
+              callArgs = target.args || [];
+            }
+            this.target = fn;
+            this.args = Array.isArray(callArgs) ? callArgs : [callArgs];
+            this.promise = null;
+            this.start = () => {
+              if (typeof this.target === 'function') {
+                this.promise = (async () => {
+                  try {
+                    await this.target(...this.args);
+                  } catch (e) {
+                    if (e.message !== 'KEYBOARD_INTERRUPT' && !self.stopRequested) {
+                      console.error('[VirtualThread Error]', e);
+                    }
+                  }
+                })();
+              }
+              return this;
+            };
+            this.join = () => this.promise || Promise.resolve();
+          }
+        },
+
         ADC0834: {
           setup: () => { if (vADC.setup) vADC.setup(); },
           getResult: (ch) => vADC.getResult ? vADC.getResult(ch) : 128
@@ -1010,8 +1151,30 @@
           if (typeof target[Symbol.iterator] === 'function') return target;
           return Object.keys(target);
         },
+        enumerate: (target, start = 0) => {
+          const arr = Array.isArray(target) ? target : Object.values(target || {});
+          return arr.map((item, idx) => [idx + start, item]);
+        },
+        list: (target) => {
+          if (target == null) return [];
+          if (Array.isArray(target)) return target;
+          if (typeof target === 'string') return target.split('');
+          if (typeof target[Symbol.iterator] === 'function') return Array.from(target);
+          return Object.keys(target);
+        },
         sleep: async (s) => await self.sleep(s),
-        isCancelled: () => self.stopRequested
+        isCancelled: () => self.stopRequested,
+        yieldCheck: async () => {
+          if (self.stopRequested) throw new Error('KEYBOARD_INTERRUPT');
+          while (self.isPaused && !self.stopRequested) {
+            await new Promise(r => setTimeout(r, 50));
+          }
+          const now = Date.now();
+          if (now - lastYield > 20) {
+            lastYield = now;
+            await new Promise(r => setTimeout(r, 0));
+          }
+        }
       };
 
       try {
@@ -1021,7 +1184,11 @@
 
         await runnerFn(env);
 
-        this.emitOutput('info', `[PyRunner] Execution finished normally.`);
+        if (this.stopRequested) {
+          this.emitOutput('warn', `[PyRunner] KeyboardInterrupt (Program stopped by user)`);
+        } else {
+          this.emitOutput('info', `[PyRunner] Execution finished normally.`);
+        }
       } catch (err) {
         if (err.message === 'KEYBOARD_INTERRUPT' || this.stopRequested) {
           this.emitOutput('warn', `[PyRunner] KeyboardInterrupt (Program stopped by user)`);
@@ -1032,13 +1199,17 @@
       } finally {
         this.isRunning = false;
         this.isPaused = false;
+        if (this.activeTimers) {
+          this.activeTimers.forEach(t => clearTimeout(t));
+          this.activeTimers.length = 0;
+        }
         this.emitState('stopped');
         if (vAudio && vAudio.stopTone) vAudio.stopTone();
       }
     }
 
     async stop() {
-      if (!this.isRunning) return;
+      if (!this.isRunning && !this.stopRequested) return;
       this.stopRequested = true;
       this.isPaused = false;
       this.emitState('stopping');
@@ -1047,7 +1218,12 @@
       const vAudio = global.VirtualAudio;
       if (vAudio && vAudio.stopTone) vAudio.stopTone();
 
-      await new Promise(r => setTimeout(r, 150));
+      if (this.activeTimers) {
+        this.activeTimers.forEach(t => clearTimeout(t));
+        this.activeTimers.length = 0;
+      }
+
+      await new Promise(r => setTimeout(r, 120));
       if (vGPIO && vGPIO.cleanup) vGPIO.cleanup();
       this.isRunning = false;
       this.emitState('stopped');

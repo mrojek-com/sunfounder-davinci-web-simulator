@@ -416,6 +416,7 @@ body {
 .status-badge.idle { background: #263238; color: #90a4ae; }
 .status-badge.running { background: rgba(0, 230, 118, 0.2); color: #00e676; border: 1px solid #00e676; }
 .status-badge.paused { background: rgba(255, 179, 0, 0.2); color: #ffb300; border: 1px solid #ffb300; }
+.status-badge.stopping { background: rgba(227, 24, 55, 0.2); color: #ff5252; border: 1px solid #ff5252; }
 
 .speed-wrap {
   display: flex;

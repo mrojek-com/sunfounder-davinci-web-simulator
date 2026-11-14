@@ -359,6 +359,33 @@ for i in range(2):
     assert.ok(printed.some(p => p.includes('Color set to:')), 'Must output Color set to: from gpiozero script');
   });
 
+  await testAsync('Python runner maintains active running state and responds to stop() signal without locking thread', async () => {
+    const runner = new PythonSimulatorRunner();
+    let stateTransitions = [];
+    runner.onStateChange(st => stateTransitions.push(st));
+
+    const loopScript = `
+import time
+count = 0
+while True:
+    count += 1
+    time.sleep(0.01)
+`;
+    const runPromise = runner.runCode(loopScript);
+
+    // Verify it stays active in running state
+    await new Promise(r => setTimeout(r, 60));
+    assert.strictEqual(runner.isRunning, true, 'Runner must remain active and running');
+    assert.strictEqual(stateTransitions[stateTransitions.length - 1], 'running', 'Latest state must be running');
+
+    // Verify stop signal stops the runner and transitions to stopped
+    await runner.stop();
+    await runPromise;
+
+    assert.strictEqual(runner.isRunning, false, 'Runner must be stopped after stop()');
+    assert.strictEqual(stateTransitions[stateTransitions.length - 1], 'stopped', 'Final state must be stopped');
+  });
+
   // ==========================================
   // 6. LESSONS DATABASE INTEGRITY
   // ==========================================
