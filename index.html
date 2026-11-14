@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunFounder DaVinci Kit Simulator | Raspberry Pi 2B Workbench</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍓</text></svg>">
+</head>
+<body>
+
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="brand-row">
+      <span class="rpi-icon">🍓</span>
+      <div class="brand-text">
+        <h1>SunFounder DaVinci Kit Web Simulator</h1>
+        <div class="brand-sub">Hardware Emulation Studio for Raspberry Pi 2 Model B</div>
+      </div>
+    </div>
+
+    <!-- Lesson Selector & Filters -->
+    <div class="header-controls">
+      <div class="cat-filters">
+        <button class="cat-filter-btn active" data-cat="all">All Lessons (39)</button>
+        <button class="cat-filter-btn" data-cat="output">Outputs (1.x)</button>
+        <button class="cat-filter-btn" data-cat="input">Inputs (2.x)</button>
+        <button class="cat-filter-btn" data-cat="extension">Smart Projects (3.x)</button>
+      </div>
+
+      <div class="lesson-selector-wrap">
+        <select id="lesson-select" class="lesson-select-dropdown" aria-label="Select DaVinci Kit Lesson">
+          <!-- Populated dynamically by app.js -->
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tab Bar -->
+  <nav class="app-navigation-bar">
+    <button class="nav-tab-btn active" data-tab="workbench">
+      <span>⚡</span> Interactive Workbench
+    </button>
+    <button class="nav-tab-btn" data-tab="wiring">
+      <span>🔌</span> Breadboard Wiring
+    </button>
+    <button class="nav-tab-btn" data-tab="schematic">
+      <span>📐</span> Circuit Schematics
+    </button>
+    <button class="nav-tab-btn" data-tab="video">
+      <span>📺</span> Video Tutorial
+    </button>
+    <button class="nav-tab-btn" data-tab="pinout">
+      <span>📌</span> Raspberry Pi 2B Pinout
+    </button>
+    <button class="nav-tab-btn" data-tab="code">
+      <span>🐍</span> Python Code Editor
+    </button>
+    <button class="nav-tab-btn" data-tab="creative">
+      <span>💡</span> Brainstorming & Creative Lab
+    </button>
+  </nav>
+
+  <!-- Execution Controls Toolbar -->
+  <div class="exec-control-bar">
+    <div class="ctrl-btn-group">
+      <button class="btn btn-primary" id="btn-run-code">
+        <span>▶</span> Run Simulation (F5)
+      </button>
+      <button class="btn" id="btn-pause-code" disabled>
+        <span>⏸</span> Pause
+      </button>
+      <button class="btn btn-danger" id="btn-stop-code" disabled>
+        <span>⏹</span> Stop (Esc)
+      </button>
+      <span class="status-badge idle" id="run-status-badge">IDLE</span>
+    </div>
+
+    <div class="speed-wrap">
+      <span>Simulation Clock:</span>
+      <select id="speed-select" class="speed-select">
+        <option value="0.5">0.5x (Slow Motion)</option>
+        <option value="1.0" selected>1.0x (Real Time)</option>
+        <option value="2.0">2.0x (Fast)</option>
+        <option value="5.0">5.0x (Turbo)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main Multi-Tab Stage -->
+  <main class="main-stage-container">
+
+    <!-- TAB 1: INTERACTIVE WORKBENCH -->
+    <section class="tab-panel active" id="tab-workbench">
+      <div class="workbench-layout">
+        <!-- Left: Interactive Hardware Component Stage -->
+        <div class="workbench-left" id="components-view-mount">
+          <!-- Dynamically populated by ComponentsView.js -->
+        </div>
+
+        <!-- Right: Raspberry Pi 2B, T-Cobbler & Breadboard Canvas -->
+        <div class="workbench-right" id="breadboard-view-mount">
+          <!-- Dynamically populated by BreadboardView.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: OFFICIAL BREADBOARD WIRING -->
+    <section class="tab-panel" id="tab-wiring">
+      <div class="media-tab-content">
+        <div class="diagram-viewer-card">
+          <h3>Official Breadboard Wiring Diagram</h3>
+          <div id="wiring-fallback-text" style="display:none; color:#888; padding:20px; text-align:center;">
+            Wiring diagram loading or not specified for this project.
+          </div>
+          <img id="wiring-diagram-img" class="diagram-img" src="" alt="SunFounder Official Breadboard Wiring">
+        </div>
+
+        <div class="diagram-viewer-card" id="comp-list-card">
+          <h3>Required Components & Parts</h3>
+          <img id="comp-list-img" class="diagram-img" src="" alt="Lesson Component List">
+        </div>
+
+        <div class="diagram-viewer-card" id="all-web-images-card">
+          <h3>All Official Website Diagrams & Figures for This Lesson</h3>
+          <div id="all-web-images-grid" class="wiring-extra-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: CIRCUIT SCHEMATICS & PHENOMENON -->
+    <section class="tab-panel" id="tab-schematic">
+      <div class="media-tab-content">
+        <div class="diagram-viewer-card">
+          <h3>Electronic Circuit Schematic</h3>
+          <img id="schematic-diagram-img" class="diagram-img" src="" alt="Circuit Schematic Diagram">
+        </div>
+
+        <div class="diagram-viewer-card" id="phenomenon-card">
+          <h3>Real Hardware Phenomenon (Assembled Circuit)</h3>
+          <img id="phenomenon-img" class="diagram-img" src="" alt="Assembled Hardware Photo">
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: OFFICIAL VIDEO TUTORIAL -->
+    <section class="tab-panel" id="tab-video">
+      <div class="media-tab-content">
+        <div class="diagram-viewer-card">
+          <h3 id="yt-video-title">Official Video Lesson</h3>
+          <div class="video-container">
+            <iframe id="yt-video-frame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            Original video produced in partnership with SunFounder. 
+            <a id="yt-external-link" href="#" target="_blank" rel="noopener noreferrer" style="color: var(--rpi-blue);">Open on YouTube ↗</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: RASPBERRY PI 2B PINOUT & SAFETY GUIDE -->
+    <section class="tab-panel" id="tab-pinout">
+      <div class="pinout-layout">
+        <div class="diagram-viewer-card">
+          <h3>Raspberry Pi 2 Model B (40-Pin GPIO Header)</h3>
+          <p style="color: var(--text-muted); font-size: 13px;">
+            The Raspberry Pi 2 Model B features a 40-pin GPIO connector matching all modern 40-pin Raspberry Pi boards.
+            Pins labeled in green are 3.3V logic GPIOs. <strong>Never connect 5V directly to any GPIO pin!</strong>
+          </p>
+          <table class="pinout-table">
+            <thead>
+              <tr>
+                <th style="width: 45%;">Left Column (Odd Pins)</th>
+                <th style="text-align:center;">Pin</th>
+                <th style="text-align:center;">Pin</th>
+                <th style="width: 45%;">Right Column (Even Pins)</th>
+              </tr>
+            </thead>
+            <tbody id="pinout-table-body">
+              <!-- Rendered dynamically by app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="diagram-viewer-card">
+          <h3>⚠️ Pre-Wiring Safety Invariants for Raspberry Pi 2B</h3>
+          <ul style="padding-left: 20px; font-size: 13px; line-height: 1.8; color: #d1d5db;">
+            <li><strong>3.3V Logic Tolerance:</strong> Raspberry Pi GPIO pins are strictly 3.3V tolerant. An input voltage higher than 3.3V will permanently burn the SoC GPIO bank. Always use a voltage divider (e.g., for 5V ultrasonic echo pins) or an ADC0834 chip.</li>
+            <li><strong>Maximum Pin Current:</strong> Maximum current draw from a single GPIO pin is 16mA (recommended ≤ 3mA). Total combined current from all 3.3V pins must never exceed 50mA.</li>
+            <li><strong>T-Cobbler Ribbon Cable Orientation:</strong> The red stripe on the 40-pin ribbon cable MUST correspond to Pin 1 (3.3V Power) on both the Raspberry Pi and the T-Cobbler. Reversing the cable will swap power and ground rails.</li>
+            <li><strong>Power Supply:</strong> Always power your Raspberry Pi 2B with a stable 5V / 2.0A or 2.5A Micro-USB adapter.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: PYTHON CODE PLAYGROUND -->
+    <section class="tab-panel" id="tab-code">
+      <div class="code-tab-layout">
+        <div class="editor-toolbar">
+          <div class="editor-filename">
+            <span>📄</span> SunFounder Official Python Source Code
+          </div>
+          <button class="btn btn-sm" id="btn-reset-code">
+            <span>↺</span> Reset to Default
+          </button>
+        </div>
+        <textarea id="python-code-editor" class="code-textarea" spellcheck="false" placeholder="# Enter Python code here..."></textarea>
+      </div>
+    </section>
+
+    <!-- TAB 7: BRAINSTORMING & CREATIVE LAB -->
+    <section class="tab-panel" id="tab-creative">
+      <div id="creative-lab-mount"></div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Terminal Log Drawer -->
+  <footer class="terminal-drawer">
+    <div class="terminal-header">
+      <div class="term-title">
+        <span>💻</span> Execution Terminal & Python Standard Output (stdout)
+      </div>
+      <button class="btn btn-sm" id="btn-clear-terminal">Clear Terminal</button>
+    </div>
+    <div class="terminal-body" id="terminal-logs">
+      <!-- stdout and engine logs stream here -->
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="js/data/lessons.js"></script>
+  <script src="js/data/creative_concepts.js"></script>
+  <script src="js/engine/pinout.js"></script>
+  <script src="js/engine/virtual_gpio.js"></script>
+  <script src="js/engine/virtual_peripherals.js"></script>
+  <script src="js/engine/electrical_guard.js"></script>
+  <script src="js/engine/python_runner.js"></script>
+  <script src="js/components/ComponentsView.js"></script>
+  <script src="js/components/BreadboardView.js"></script>
+  <script src="js/components/CreativeLabView.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
