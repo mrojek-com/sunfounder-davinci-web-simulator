@@ -1,5 +1,7 @@
-// SunFounder DaVinci Kit Lessons Database (Pin-Accurate Section-Parsed)
-// Contains all 39 official lessons, exact wiring/schematic images, breadboard specs, YouTube videos, and Python code
+// SunFounder DaVinci Kit Lessons Catalog (39 Official Curriculum Projects)
+// Dual Hardware Architecture Support:
+// 1. Raspberry Pi 2B / 3 / 4 (Broadcom BCM2835/2836/2837/2711 + RPi.GPIO stack)
+// 2. Raspberry Pi 5 (Broadcom BCM2712 + RP1 I/O Controller + gpiozero stack)
 
 const DAVINCI_LESSONS = [
   {
@@ -78,7 +80,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -94,7 +96,7 @@ const DAVINCI_LESSONS = [
             "col": 28,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 Resistor (Col 28A -> + Rail)"
+          "label": "220Ω Resistor (Col 28A -> + Rail)"
         }
       ],
       "wires": [
@@ -134,9 +136,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor (Col 28A -> + Rail)"
+        "text": "Place 220Ω Resistor (Col 28A -> + Rail)"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.1_BlinkingLed.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED\nfrom time import sleep\n\n# Initialize an LED connected to GPIO pin 17 using the GPIO Zero library.\nled = LED(17)\n\ntry:\n    # Start an infinite loop to toggle the LED state.\n    while True:\n        # Turn on the LED and print a message to the console.\n        led.on()\n        print('...LED ON')\n\n        # Wait for 0.5 seconds with the LED on.\n        sleep(0.5)\n\n        # Turn off the LED and print a message to the console.\n        led.off()\n        print('LED OFF...')\n\n        # Wait for 0.5 seconds with the LED off.\n        sleep(0.5)\n\nexcept KeyboardInterrupt:\n    # Gracefully handle a keyboard interrupt (Ctrl+C) by breaking the loop.\n    # GPIO Zero handles cleanup of GPIO settings automatically on exit.\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.2",
@@ -220,7 +226,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9 (R)",
+          "value": "220Ω (R)",
           "bands": [
             "#e53935",
             "#e53935",
@@ -235,11 +241,11 @@ const DAVINCI_LESSONS = [
             "col": 27,
             "row": "E"
           },
-          "label": "220\u03a9 Resistor Red (27F -> 27E)"
+          "label": "220Ω Resistor Red (27F -> 27E)"
         },
         {
           "type": "resistor",
-          "value": "220\u03a9 (G)",
+          "value": "220Ω (G)",
           "bands": [
             "#e53935",
             "#e53935",
@@ -254,11 +260,11 @@ const DAVINCI_LESSONS = [
             "col": 29,
             "row": "E"
           },
-          "label": "220\u03a9 Resistor Green (29F -> 29E)"
+          "label": "220Ω Resistor Green (29F -> 29E)"
         },
         {
           "type": "resistor",
-          "value": "220\u03a9 (B)",
+          "value": "220Ω (B)",
           "bands": [
             "#e53935",
             "#e53935",
@@ -273,7 +279,7 @@ const DAVINCI_LESSONS = [
             "col": 30,
             "row": "E"
           },
-          "label": "220\u03a9 Resistor Blue (30F -> 30E)"
+          "label": "220Ω Resistor Blue (30F -> 30E)"
         }
       ],
       "wires": [
@@ -371,19 +377,23 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor Red (27F -> 27E)"
+        "text": "Place 220Ω Resistor Red (27F -> 27E)"
       },
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor Green (29F -> 29E)"
+        "text": "Place 220Ω Resistor Green (29F -> 29E)"
       },
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor Blue (30F -> 30E)"
+        "text": "Place 220Ω Resistor Blue (30F -> 30E)"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.2_rgbLed.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import RGBLED\nfrom time import sleep\n\n# Define a list of colors for the RGB LED in RGB format (Red, Green, Blue).\n# Each color component ranges from 0 (off) to 1 (full intensity).\nCOLORS = [(1, 0, 0), (0, 1, 0), (0.2, 0.1, 1), (1, 1, 0), (1, 0, 1), (0, 1, 1)]\n\n# Initialize an RGB LED. Connect the red component to GPIO 17, green to GPIO 18, and blue to GPIO 27.\nrgb_led = RGBLED(red=17, green=18, blue=27)\n\ntry:\n    # Continuously cycle through the defined colors.\n    while True:\n        for color in COLORS:\n            # Set the RGB LED to the current color.\n            rgb_led.color = color\n            # Output the current color to the console.\n            print(f\"Color set to: {color}\")\n            # Wait for 1 second before switching to the next color.\n            sleep(1)\n\nexcept KeyboardInterrupt:\n    # Handle a KeyboardInterrupt (Ctrl+C) to exit the loop gracefully.\n    # GPIO cleanup will be managed automatically by GPIO Zero on script termination.\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.3",
@@ -461,7 +471,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "10x 220\u03a9",
+          "value": "10x 220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -476,7 +486,7 @@ const DAVINCI_LESSONS = [
             "col": 24,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 Anode Pull-Up Array -> + Rail"
+          "label": "220Ω Anode Pull-Up Array -> + Rail"
         }
       ],
       "wires": [
@@ -696,9 +706,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Anode Pull-Up Array -> + Rail"
+        "text": "Place 220Ω Anode Pull-Up Array -> + Rail"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.3_LedBarGraph.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import LED\nfrom time import sleep\n\n# Define GPIO pins where LEDs are connected\nled_pins = [18, 23, 24, 25, 8, 7, 12, 16, 20, 21]\n\n# Create LED objects for each pin\nleds = [LED(pin) for pin in led_pins]\n\ndef odd_led_bar_graph():\n    # Sequentially light up odd-numbered LEDs (index 0, 2, 4, etc.)\n    for i in range(5):\n        j = i * 2  # Calculate odd index\n        leds[j].on()  # Turn on odd-numbered LED\n        sleep(0.3)    # Delay for visual effect\n        leds[j].off() # Turn off LED\n\ndef even_led_bar_graph():\n    # Sequentially light up even-numbered LEDs (index 1, 3, 5, etc.)\n    for i in range(5):\n        j = i * 2 + 1  # Calculate even index\n        leds[j].on()   # Turn on even-numbered LED\n        sleep(0.3)     # Delay for visual effect\n        leds[j].off()  # Turn off LED\n\ndef all_led_bar_graph():\n    # Sequentially light up all LEDs one by one\n    for led in leds:\n        led.on()       # Turn on LED\n        sleep(0.3)     # Delay for visual effect\n        led.off()      # Turn off LED\n\ndef turn_off_all_leds():\n    # Turn off all LEDs at once\n    for led in leds:\n        led.off()\n\ntry:\n    # Main loop to cycle through LED patterns\n    while True:\n        odd_led_bar_graph()   # Activate odd-numbered LEDs\n        sleep(0.3)            # Pause between patterns\n        even_led_bar_graph()  # Activate even-numbered LEDs\n        sleep(0.3)            # Pause between patterns\n        all_led_bar_graph()   # Activate all LEDs\n        sleep(0.3)            # Pause before restarting\n\nexcept KeyboardInterrupt:\n    # Handle interruption (Ctrl+C) gracefully\n    turn_off_all_leds()      # Ensure all LEDs are turned off on exit\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.4",
@@ -915,7 +929,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg Display"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.4_7-Segment-74HC595.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import OutputDevice\nfrom time import sleep\n\n# GPIO pins connected to 74HC595 shift register\nSDI = OutputDevice(17)   # Serial Data Input\nRCLK = OutputDevice(18)  # Memory Clock Input (Register Clock)\nSRCLK = OutputDevice(27) # Shift Register Clock\n\n# Hexadecimal digit codes for a common cathode 7-segment display\nsegCode = [\n    0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d,\n    0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71\n]\n\ndef hc595_shift(data):\n    # Shift 8 bits of data into the 74HC595\n    for bit in range(8):\n        # Set SDI high or low based on data bit\n        SDI.value = 0x80 & (data << bit)\n        # Trigger shift register clock\n        SRCLK.on()\n        sleep(0.001)\n        SRCLK.off()\n    # Latch data to output by triggering memory clock\n    RCLK.on()\n    sleep(0.001)\n    RCLK.off()\n\ndef display_all_on():\n    # Function to turn all segments on (for common cathode 7-segment display)\n    all_on_code = 0x3f\n    hc595_shift(all_on_code)\n    print(\"Displaying all segments on\")\n\ntry:\n    while True:\n        # Display each hexadecimal digit on 7-segment display\n        for code in segCode:\n            hc595_shift(code)  # Shift the code into 74HC595\n            # Print the displayed segment code\n            print(f\"Displaying segCode[{segCode.index(code)}]: 0x{code:02X}\")\n            sleep(0.5)  # Pause between displaying each digit\n\nexcept KeyboardInterrupt:\n    # Gracefully handle script interruption (e.g., Ctrl+C)\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.5",
@@ -1164,7 +1182,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.5_4-Digit.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice\nimport time\nimport threading\n\n# Define GPIO pins for the 74HC595 shift register\nSDI = OutputDevice(24)   # Serial Data Input\nRCLK = OutputDevice(23)  # Register Clock\nSRCLK = OutputDevice(18) # Shift Register Clock\n\n# Define GPIO pins for digit selection on the 7-segment display\nplacePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]\n\n# Define segment codes for numbers 0-9 for the 7-segment display\nnumber = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)\n\ncounter = 0  # Initialize counter for display\ntimer1 = 0   # Initialize timer for counter increment\n\ndef clearDisplay():\n    \"\"\" Clear the 7-segment display. \"\"\"\n    for _ in range(8):\n        SDI.on()\n        SRCLK.on()\n        SRCLK.off()\n    RCLK.on()\n    RCLK.off()\n\ndef hc595_shift(data):\n    \"\"\" Shift a byte of data to the 74HC595 shift register. \"\"\"\n    for i in range(8):\n        SDI.value = 0x80 & (data << i)  # Set SDI high/low based on data bit\n        SRCLK.on()  # Pulse the Shift Register Clock\n        SRCLK.off()\n    RCLK.on()  # Latch data on the output by pulsing Register Clock\n    RCLK.off()\n\ndef pickDigit(digit):\n    \"\"\" Select a digit for display on the 7-segment display. \"\"\"\n    for pin in placePin:\n        pin.off()  # Turn off all digit selection pins\n    placePin[digit].on()  # Turn on the selected digit\n\ndef timer():\n    \"\"\" Timer function to increment the counter every second. \"\"\"\n    global counter, timer1\n    timer1 = threading.Timer(1.0, timer)  # Reset timer for next increment\n    timer1.start()\n    counter += 1  # Increment counter\n    print(\"%d\" % counter)  # Print current counter value\n\ndef setup():\n    \"\"\" Setup initial state and start the timer. \"\"\"\n    global timer1\n    timer1 = threading.Timer(1.0, timer)  # Initialize and start the timer\n    timer1.start()\n\ndef loop():\n    \"\"\" Main loop to update the 7-segment display with counter value. \"\"\"\n    global counter\n    while True:\n        for i in range(4):  # Loop through each digit\n            clearDisplay()  # Clear display before setting new digit\n            pickDigit(i)    # Select digit for display\n\n            # Choose the digit of counter to display\n            digit = (counter // (10 ** i)) % 10\n\n            hc595_shift(number[digit])  # Shift digit value to 74HC595\n            time.sleep(0.001)  # Short delay for display stability\n\ndef destroy():\n    \"\"\" Cleanup GPIO resources and stop timer on exit. \"\"\"\n    global timer1\n    timer1.cancel()  # Stop the timer\n    for device in [SDI, RCLK, SRCLK] + placePin:\n        device.close()  # Close GPIO devices\n\ntry:\n    setup()  # Initialize the setup\n    while True:\n        loop()  # Start the main loop\n        \nexcept KeyboardInterrupt:\n    # Handle script interruption (e.g., Ctrl+C)\n    destroy()  # Cleanup resources on exit\n\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.6",
@@ -1323,7 +1345,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 2x 74HC595"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.6_led_dot_matrix.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice\nfrom time import sleep\n\n# Define GPIO pins connected to the 74HC595 shift register\nSDI = OutputDevice(17)   # Serial Data Input\nRCLK = OutputDevice(18)  # Register Clock\nSRCLK = OutputDevice(27) # Shift Register Clock\n\n# Define patterns for matrix display; ROWs are anodes (+), COLs are cathodes (-)\n# Pattern for ROWs (anode signals)\ncode_H = [0x01, 0xff, 0x80, 0xff, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]\n# Pattern for COLs (cathode signals)\ncode_L = [0x00, 0x7f, 0x00, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f]\n\n# Shift data to 74HC595\ndef hc595_shift(dat):\n    \"\"\" Shift data to the 74HC595 shift register for displaying on the matrix. \"\"\"\n    for i in range(8):\n        # Set SDI value and trigger shift register clock\n        SDI.value = 0x80 & (dat << i)\n        SRCLK.on()\n        SRCLK.off()\n    # Trigger register clock to update display\n    RCLK.on()\n    sleep(0.001)\n    RCLK.off()\n\ndef main():\n    \"\"\" Main loop for cycling through display patterns. \"\"\"\n    while True:\n        # Cycle through patterns in ascending order\n        for i in range(len(code_H)):\n            hc595_shift(code_L[i])\n            hc595_shift(code_H[i])\n            sleep(0.1)\n\n        # Cycle through patterns in descending order\n        for i in range(len(code_H)-1, -1, -1):\n            hc595_shift(code_L[i])\n            hc595_shift(code_H[i])\n            sleep(0.1)\n\n# Run main loop, handle keyboard interrupt gracefully\ntry:\n    main()\nexcept KeyboardInterrupt:\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.1.7",
@@ -1474,7 +1500,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place I2C LCD1602 (0x27)"
       }
-    ]
+    ],
+    "python_file_pi5": "1.1.7_Lcd1602.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nimport LCD1602  # Import module for interfacing with LCD1602\nimport time     # Import module for timing functions\n\ndef setup():\n    # Initialize LCD with I2C address 0x27 and enable backlight\n    LCD1602.init(0x27, 1) \n    # Display the message 'Greetings!' at the top-left corner (row 0, column 0)\n    LCD1602.write(0, 0, 'Greetings!') \n    # Display the message 'From SunFounder' on the second line (row 1, column 1)\n    LCD1602.write(1, 1, 'From SunFounder') \n    time.sleep(2)  # Display messages for 2 seconds\n\ntry:\n    setup()  # Run the setup function to initialize the LCD and display messages\n    \nexcept KeyboardInterrupt:\n    # Handle any keyboard interruption (like Ctrl+C) gracefully\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.2.1",
@@ -1558,7 +1588,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "1k\u03a9",
+          "value": "1kΩ",
           "bands": [
             "#795548",
             "#212121",
@@ -1573,7 +1603,7 @@ const DAVINCI_LESSONS = [
             "col": 24,
             "row": "B"
           },
-          "label": "1k\u03a9 Base Resistor (24B -> 26B)"
+          "label": "1kΩ Base Resistor (24B -> 26B)"
         },
         {
           "type": "buzzer",
@@ -1606,7 +1636,7 @@ const DAVINCI_LESSONS = [
             "row": "A"
           },
           "color": "#2196f3",
-          "label": "GPIO17 (Col 6A) -> 1k\u03a9 Resistor -> S8050 Base",
+          "label": "GPIO17 (Col 6A) -> 1kΩ Resistor -> S8050 Base",
           "bcm": 17
         },
         {
@@ -1649,7 +1679,7 @@ const DAVINCI_LESSONS = [
       {
         "kind": "wire",
         "color": "#2196f3",
-        "text": "GPIO17 (Col 6A) -> 1k\u03a9 Resistor -> S8050 Base"
+        "text": "GPIO17 (Col 6A) -> 1kΩ Resistor -> S8050 Base"
       },
       {
         "kind": "wire",
@@ -1669,14 +1699,18 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 1k\u03a9 Base Resistor (24B -> 26B)"
+        "text": "Place 1kΩ Base Resistor (24B -> 26B)"
       },
       {
         "kind": "component",
         "color": "#8b9bb4",
         "text": "Place Active Buzzer"
       }
-    ]
+    ],
+    "python_file_pi5": "1.2.1_ActiveBuzzer.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import Buzzer\nfrom time import sleep\n\n# Initialize a Buzzer object on GPIO pin 17\nbuzzer = Buzzer(17)\n\ntry:\n    while True:\n        # Turn on the buzzer\n        print('Buzzer On')\n        buzzer.on()\n        sleep(0.1)  # Keep the buzzer on for 0.1 seconds\n\n        # Turn off the buzzer\n        print('Buzzer Off')\n        buzzer.off()\n        sleep(0.1)  # Keep the buzzer off for 0.1 seconds\n\nexcept KeyboardInterrupt:\n    # Handle KeyboardInterrupt (Ctrl+C) for clean script termination\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.2.2",
@@ -1787,7 +1821,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Passive Buzzer"
       }
-    ]
+    ],
+    "python_file_pi5": "1.2.2_PassiveBuzzer.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import TonalBuzzer\nfrom time import sleep\n\n# Initialize a TonalBuzzer connected to GPIO pin 17\ntb = TonalBuzzer(17)  # Update this pin number based on your setup\n\ndef play(tune):\n    \"\"\"\n    Play a musical tune using the buzzer.\n    :param tune: List of tuples (note, duration), where each tuple represents a note and its duration.\n    \"\"\"\n    for note, duration in tune:\n        print(note)  # Output the current note being played\n        tb.play(note)  # Play the note on the buzzer\n        sleep(float(duration))  # Delay for the duration of the note\n    tb.stop()  # Stop playing after the tune is complete\n\n# Define a musical tune as a sequence of notes and durations\ntune = [('C#4', 0.2), ('D4', 0.2), (None, 0.2),\n    ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),\n    ('F#4', 0.2), ('G4', 0.2), (None, 0.6),\n    ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),\n    ('F#4', 0.2), ('G4', 0.2), (None, 0.2),\n    ('C4', 0.2), ('B4', 0.2), (None, 0.2),\n    ('F#4', 0.2), ('G4', 0.2), (None, 0.2),\n    ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),\n    ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), \n    ('D4', 0.2), ('E4', 0.2)]\n\ntry:\n    play(tune)  # Execute the play function to start playing the tune\n\nexcept KeyboardInterrupt:\n    # Handle KeyboardInterrupt for graceful termination\n    pass\n\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.3.1",
@@ -2002,7 +2040,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place DC Motor"
       }
-    ]
+    ],
+    "python_file_pi5": "1.3.1_Motor.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import Motor\nfrom time import sleep\n\n# Initialize the Motor with GPIO Zero, specifying GPIO pins for forward (17), backward (27), and enable (22) control\nmotor = Motor(forward=17, backward=27, enable=22)\n\ntry:\n    # Main function to control the motor's direction and movement.\n    # Alternates motor rotation between clockwise and counterclockwise with stops in between.\n    actions = {'CW': motor.forward, 'CCW': motor.backward, 'STOP': motor.stop}  # Define motor actions for readability\n    \n    while True:\n        # Loop through the defined actions to control motor direction\n        for action in ['CW', 'STOP', 'CCW', 'STOP']:\n            actions[action]()  # Execute the current action (forward, stop, backward, stop)\n            print(f\"{action}\")  # Display the current action in the console\n            sleep(5)  # Pause for 5 seconds before proceeding to the next action\n\nexcept KeyboardInterrupt:\n    # Gracefully handle a keyboard interrupt (e.g., Ctrl+C) to stop the program\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.3.2",
@@ -2162,7 +2204,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place SG90 Servo"
       }
-    ]
+    ],
+    "python_file_pi5": "1.3.2_Servo.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import Servo\nfrom time import sleep\n\n# Set the GPIO pin number where the servo motor is connected\nmyGPIO = 18\n\n# Define a correction factor to fine-tune servo pulse width\nmyCorrection = 0.45\nmaxPW = (2.0 + myCorrection) / 1000  # Calculate maximum pulse width\nminPW = (1.0 - myCorrection) / 1000  # Calculate minimum pulse width\n\n# Initialize the Servo object with custom pulse widths\nservo = Servo(myGPIO, min_pulse_width=minPW, max_pulse_width=maxPW)\n\ntry:\n    while True:\n        # Position the servo at the middle and wait\n        servo.mid()\n        print(\"mid\")  # Indicate current position\n        sleep(0.5)    # Brief pause for 0.5 seconds\n\n        # Move the servo to its minimum position and wait\n        servo.min()\n        print(\"min\")  # Indicate current position\n        sleep(1)      # Hold position for 1 second\n\n        # Return the servo to the middle position and wait\n        servo.mid()\n        print(\"mid\")  # Indicate current position\n        sleep(0.5)    # Brief pause for 0.5 seconds\n\n        # Move the servo to its maximum position and wait\n        servo.max()\n        print(\"max\")  # Indicate current position\n        sleep(1)      # Hold position for 1 second\n\nexcept KeyboardInterrupt:\n    # Gracefully terminate the script on a keyboard interrupt (Ctrl+C)\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.3.3",
@@ -2340,7 +2386,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ULN2003 / L293D"
       }
-    ]
+    ],
+    "python_file_pi5": "1.3.3_Relay.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice\nfrom time import sleep\n\n# Initialize motor pins to GPIO pins 18, 23, 24, 25\nmotorPin = [OutputDevice(pin) for pin in (18, 23, 24, 25)]\n\n# Set motor rotation speed parameters\nrotationPerMinute = 15\nstepsPerRevolution = 2048\n# Calculate time to wait between each step for smooth motor operation\nstepSpeed = (60 / rotationPerMinute) / stepsPerRevolution\n\ndef rotary(direction):\n    \"\"\"\n    Controls the rotation of the motor based on the specified direction.\n    \n    :param direction: 'c' for clockwise, 'a' for anti-clockwise\n    \"\"\"\n    if direction == 'c':\n        # Execute the stepping sequence for clockwise rotation\n        for j in range(4):\n            for i in range(4):\n                if 0x99 << j & (0x08 >> i):\n                    motorPin[i].on()\n                else:\n                    motorPin[i].off()\n                sleep(stepSpeed)\n    elif direction == 'a':\n        # Execute the stepping sequence for anti-clockwise rotation\n        for j in range(4):\n            for i in range(4):\n                if 0x99 >> j & (0x08 >> i):\n                    motorPin[i].on()\n                else:\n                    motorPin[i].off()\n                sleep(stepSpeed)\n\ndef loop():\n    \"\"\"\n    Continuously prompts the user to select the motor rotation direction\n    and controls the motor based on this input.\n    \"\"\"\n    while True:\n        direction = input('Select motor direction a=anticlockwise, c=clockwise: ')\n        if direction == 'c':\n            print('Motor running clockwise\\n')\n            break\n        elif direction == 'a':\n            print('Motor running anti-clockwise\\n')\n            break\n        else:\n            print('Input error, please try again!')\n\n    # Keep the motor rotating in the selected direction\n    while True:\n        rotary(direction)\n\ndef destroy():\n    \"\"\"\n    Safely turns off all motor pins, used for clean shutdown.\n    \"\"\"\n    for pin in motorPin:\n        pin.off()\n\n# Main program execution\ntry:\n    loop()\nexcept KeyboardInterrupt:\n    destroy()  # Handle keyboard interrupt to safely shut down the motor\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "1.3.4",
@@ -2455,7 +2505,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 5V Relay Module"
       }
-    ]
+    ],
+    "python_file_pi5": "1.3.4_Relay.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice  # Import the class for controlling GPIO pins\nfrom time import sleep  # Import the sleep function for delay\n\n# Initialize the relay connected to GPIO pin 17\nrelay = OutputDevice(17)\n\ntry:\n    # Loop to continuously toggle the relay's state every second\n    while True:\n        print('Relay open...')  # Inform that the relay is being activated\n        relay.on()  # Turn on the relay (assuming active low configuration)\n        sleep(1)   # Maintain the relay in the on state for 1 second\n\n        print('...Relay close')  # Inform that the relay is being deactivated\n        relay.off()  # Turn off the relay\n        sleep(1)   # Maintain the relay in the off state for 1 second\n\nexcept KeyboardInterrupt:\n    # Handle a keyboard interrupt (Ctrl+C) to exit the loop\n    relay.off()  # Ensure the relay is turned off before exiting\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.1",
@@ -2539,7 +2593,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -2554,7 +2608,7 @@ const DAVINCI_LESSONS = [
             "col": 27,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 LED Resistor (27A -> + Rail)"
+          "label": "220Ω LED Resistor (27A -> + Rail)"
         },
         {
           "type": "button",
@@ -2585,7 +2639,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "10k\u03a9",
+          "value": "10kΩ",
           "bands": [
             "#795548",
             "#212121",
@@ -2600,7 +2654,7 @@ const DAVINCI_LESSONS = [
             "col": 30,
             "row": "H"
           },
-          "label": "10k\u03a9 Pull-Down/Up Resistor"
+          "label": "10kΩ Pull-Down/Up Resistor"
         }
       ],
       "wires": [
@@ -2682,7 +2736,7 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 LED Resistor (27A -> + Rail)"
+        "text": "Place 220Ω LED Resistor (27A -> + Rail)"
       },
       {
         "kind": "component",
@@ -2692,9 +2746,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 10k\u03a9 Pull-Down/Up Resistor"
+        "text": "Place 10kΩ Pull-Down/Up Resistor"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.1_Button.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED, Button  # Import LED and Button classes from gpiozero\nfrom signal import pause  # Import pause function from signal module\n\n# Initialize an LED object on GPIO pin 17\nled = LED(17)\n# Initialize a Button object on GPIO pin 18\nbutton = Button(18)\n\n# Link the button's \"when_pressed\" event to the LED's on() method\nbutton.when_pressed = led.on\n# Link the button's \"when_released\" event to the LED's off() method\nbutton.when_released = led.off\n\n# Run an event loop that waits for button events and keeps the script running\npause()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.2",
@@ -2807,7 +2865,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -2822,7 +2880,7 @@ const DAVINCI_LESSONS = [
             "col": 30,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 Resistor"
+          "label": "220Ω Resistor"
         }
       ],
       "wires": [
@@ -2912,9 +2970,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor"
+        "text": "Place 220Ω Resistor"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.2_Slider.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED, Button  # Import LED and Button classes for GPIO control\nfrom time import sleep  # Import sleep function for adding delays\n\n# Initialize the micro switch on GPIO pin 17 with the pull-up resistor disabled\nmicro_switch = Button(17, pull_up=False)\n# Initialize LED1 on GPIO pin 22\nled1 = LED(22)\n# Initialize LED2 on GPIO pin 27\nled2 = LED(27)\n\ntry:\n    # Main loop to control LED states based on the micro switch's state\n    while True:\n        if micro_switch.is_pressed:  # Check if the micro switch is pressed\n            print('    LED1 ON    ')  # Print status message\n            led1.on()   # Turn on LED1\n            led2.off()  # Turn off LED2\n        else:  # If the micro switch is not pressed\n            print('    LED2 ON    ')  # Print status message\n            led1.off()  # Turn off LED1\n            led2.on()   # Turn on LED2\n\n        sleep(0.5)  # Wait for 0.5 seconds before rechecking the switch state\n\nexcept KeyboardInterrupt:\n    # Handle a keyboard interrupt (Ctrl+C) for a clean exit from the loop\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.3",
@@ -3025,7 +3087,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -3040,7 +3102,7 @@ const DAVINCI_LESSONS = [
             "col": 30,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 Resistor"
+          "label": "220Ω Resistor"
         }
       ],
       "wires": [
@@ -3130,9 +3192,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor"
+        "text": "Place 220Ω Resistor"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.3_Tilt.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED, Button\n\n# Initialize the Button for the tilt sensor and LEDs using GPIO Zero\nTiltPin = Button(17, pull_up=False)  # Tilt sensor connected to GPIO pin 17, pull-up resistor disabled\ngreen_led = LED(27)  # Green LED connected to GPIO pin 27\nred_led = LED(22)   # Red LED connected to GPIO pin 22\n\ndef detect():\n    \"\"\"\n    Detect the tilt sensor state and control the LEDs.\n    Turns on the red LED and turns off the green LED when tilted.\n    Turns off the red LED and turns on the green LED when not tilted.\n    \"\"\"\n    if TiltPin.is_pressed:  # Check if the sensor is tilted\n        print('    *************')\n        print('    *   Tilt!   *')\n        print('    *************')\n        red_led.on()   # Turn on red LED\n        green_led.off()  # Turn off green LED\n    else:  # If the sensor is not tilted\n        red_led.off()  # Turn off red LED\n        green_led.on()  # Turn on green LED\n\ntry:\n    while True:\n        # Continuously check the tilt sensor state and update LEDs\n        TiltPin.when_pressed = detect\n        TiltPin.when_released = detect\n\nexcept KeyboardInterrupt:\n    # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.4",
@@ -3222,7 +3288,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -3237,7 +3303,7 @@ const DAVINCI_LESSONS = [
             "col": 23,
             "row": "bot_minus"
           },
-          "label": "220\u03a9 Resistor (23A -> - Rail)"
+          "label": "220Ω Resistor (23A -> - Rail)"
         },
         {
           "type": "ic",
@@ -3265,7 +3331,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "pot",
-          "label": "10k\u03a9 Pot",
+          "label": "10kΩ Pot",
           "pins": [
             {
               "col": 33,
@@ -3404,7 +3470,7 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor (23A -> - Rail)"
+        "text": "Place 220Ω Resistor (23A -> - Rail)"
       },
       {
         "kind": "component",
@@ -3414,9 +3480,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 10k\u03a9 Pot"
+        "text": "Place 10kΩ Pot"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.4-2_Potentiometer_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nimport spidev\nimport time\nfrom gpiozero import PWMLED\n\n# Initialize PWM LED on GPIO22\nled = PWMLED(22)\n\n# Initialize SPI\nspi = spidev.SpiDev()\nspi.open(0, 0)  # Bus 0, CS0 (CE0)\nspi.max_speed_hz = 1000000\n\ndef read_adc(channel):\n    \"\"\"\n    Read analog value from MCP3008\n    :param channel: ADC channel (0-7)\n    :return: 10-bit integer (0-1023)\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    # MCP3008 protocol\n    adc = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((adc[1] & 3) << 8) | adc[2]\n    return value\n\ndef MAP(x, in_min, in_max, out_min, out_max):\n    \"\"\"\n    Map a value from one range to another\n    \"\"\"\n    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min\n\ntry:\n    while True:\n        # Read from MCP3008 channel 0\n        res = read_adc(0)\n        print('res = %d' % res)\n\n        # Map 0–1023 to 0–100%\n        R_val = MAP(res, 0, 1023, 0, 100)\n\n        # Set LED brightness\n        led.value = R_val / 100.0\n\n        time.sleep(0.2)\n\nexcept KeyboardInterrupt:\n    led.value = 0  # Turn off the LED\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.5",
@@ -3674,7 +3744,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 2x 74HC595"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.5_Keypad.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import DigitalOutputDevice, Button\nfrom time import sleep\n\nclass Keypad:\n    def __init__(self, rows_pins, cols_pins, keys):\n        \"\"\"\n        Initialize the Keypad with specified row and column pins and keypad layout.\n        :param rows_pins: List of GPIO pins for the rows.\n        :param cols_pins: List of GPIO pins for the columns.\n        :param keys: List of keys in the keypad layout.\n        \"\"\"\n        # Initialize row pins as DigitalOutputDevice\n        self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]\n        # Initialize column pins as Buttons\n        self.cols = [Button(pin, pull_up=False) for pin in cols_pins]\n        self.keys = keys  # Set the keypad layout\n\n    def read(self):\n        \"\"\"\n        Read the currently pressed keys on the keypad.\n        :return: A list of pressed keys.\n        \"\"\"\n        pressed_keys = []\n        # Scan each row and column to identify pressed keys\n        for i, row in enumerate(self.rows):\n            row.on()  # Enable the current row\n            for j, col in enumerate(self.cols):\n                if col.is_pressed:  # Check if the column button is pressed\n                    # Calculate the key index based on row and column\n                    index = i * len(self.cols) + j\n                    pressed_keys.append(self.keys[index])\n            row.off()  # Disable the current row\n        return pressed_keys\n\ntry:\n    # Configure rows, columns, and keypad layout\n    rows_pins = [18, 23, 24, 25]\n    cols_pins = [10, 22, 27, 17]\n    keys = [\"1\", \"2\", \"3\", \"A\",\n            \"4\", \"5\", \"6\", \"B\",\n            \"7\", \"8\", \"9\", \"C\",\n            \"*\", \"0\", \"#\", \"D\"]\n\n    # Create an instance of the Keypad class\n    keypad = Keypad(rows_pins, cols_pins, keys)\n    last_key_pressed = []\n\n    # Continuously read the keypad and print newly pressed keys\n    while True:\n        pressed_keys = keypad.read()\n        if pressed_keys and pressed_keys != last_key_pressed:\n            print(pressed_keys)  # Print the list of pressed keys\n            last_key_pressed = pressed_keys\n        sleep(0.1)  # Short delay to reduce CPU load\n\nexcept KeyboardInterrupt:\n    # Handle a keyboard interrupt (Ctrl+C) for a clean exit\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.1.6",
@@ -3847,7 +3921,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ADC0834"
       }
-    ]
+    ],
+    "python_file_pi5": "2.1.6-2_Joystick_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import Button\nimport spidev\nimport time\n\n# Initialize the button connected to GPIO pin 22 (joystick SW pin)\nBtnPin = Button(22)\n\n# Initialize SPI communication with MCP3008\nspi = spidev.SpiDev()\nspi.open(0, 0)  # Open SPI bus 0, device CE0\nspi.max_speed_hz = 1000000  # Set SPI speed to 1 MHz\n\ndef read_adc(channel):\n    \"\"\"\n    Reads analog value from the specified MCP3008 channel (0–7)\n    :param channel: ADC channel number (0–7)\n    :return: 10-bit integer value (0–1023)\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    adc = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((adc[1] & 0x03) << 8) | adc[2]\n    return value\n\ntry:\n    # Main loop to read and print joystick values and button state\n    while True:\n        # Read X and Y values from MCP3008 channels 0 and 1\n        x_val = read_adc(0)  # Joystick VRX connected to CH0\n        y_val = read_adc(1)  # Joystick VRY connected to CH1\n\n        # Read the state of the joystick button (SW)\n        Btn_val = BtnPin.value  # 0 = pressed, 1 = released\n\n        # Print the read values\n        print('X: %d  Y: %d  Btn: %d' % (x_val, y_val, Btn_val))\n\n        # Wait 0.2 seconds before the next reading\n        time.sleep(0.2)\n\n# Gracefully handle Ctrl+C interruption\nexcept KeyboardInterrupt:\n    spi.close()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.1",
@@ -4020,7 +4098,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ADC0834"
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.1-2_Photoresistor_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nimport spidev\nimport time\nfrom gpiozero import PWMLED\n\n# Initialize a PWM LED on GPIO pin 22\nled = PWMLED(22)\n\n# Initialize SPI communication (Bus 0, CE0 -> GPIO8)\nspi = spidev.SpiDev()\nspi.open(0, 0)  # Bus 0, CS0\nspi.max_speed_hz = 1000000  # 1 MHz\n\n# Function to read from MCP3008 channel (0–7)\ndef read_adc(channel):\n    \"\"\"\n    Read analog value from MCP3008 (0–1023)\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    # MCP3008 protocol: Start bit, Single-ended mode, Channel (3 bits), filler\n    r = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((r[1] & 3) << 8) | r[2]\n    return value\n\n# Define a function for mapping values from one range to another\ndef MAP(x, in_min, in_max, out_min, out_max):\n    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min\n\n# Main loop for reading ADC value and controlling LED brightness\ndef loop():\n    while True:\n        # Read analog value from channel 0 of MCP3008\n        analogVal = read_adc(0)\n        print('value = %d' % analogVal)\n\n        # Map 0–1023 to PWM range 0.0–1.0\n        led.value = analogVal / 1023.0\n\n        # Wait for 0.2 seconds\n        time.sleep(0.2)\n\n# Run the main loop and handle KeyboardInterrupt for graceful shutdown\ntry:\n    loop()\nexcept KeyboardInterrupt:\n    led.value = 0  # Turn off LED before exiting\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.2",
@@ -4172,7 +4254,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ADC0834"
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.2-2_Thermistor_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nimport spidev\nimport time\nimport math\n\n# Initialize SPI for MCP3008 (Bus 0, CE0)\nspi = spidev.SpiDev()\nspi.open(0, 0)  # Bus 0, Device 0 (CE0)\nspi.max_speed_hz = 1000000  # 1 MHz\n\ndef read_adc(channel):\n    \"\"\"\n    Read analog value from MCP3008 channel (0–7)\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    # MCP3008 communication format\n    adc = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((adc[1] & 0x03) << 8) | adc[2]\n    return value\n\ntry:\n    while True:\n        # Read analog value from CH0 of MCP3008\n        analogVal = read_adc(0)\n\n        # Convert to voltage (3.3V reference)\n        Vr = 3.3 * analogVal / 1023.0\n\n        # Calculate thermistor resistance\n        Rt = 10000.0 * Vr / (3.3 - Vr)\n\n        # Calculate temperature in Kelvin using the Steinhart–Hart approximation\n        tempK = 1.0 / (((math.log(Rt / 10000.0)) / 3950.0) + (1.0 / (273.15 + 25.0)))\n\n        # Convert to Celsius and Fahrenheit\n        Cel = tempK - 273.15\n        Fah = Cel * 1.8 + 32\n\n        # Print the temperature\n        print('Celsius: %.2f °C  Fahrenheit: %.2f °F' % (Cel, Fah))\n\n        # Wait before next reading\n        time.sleep(0.2)\n\nexcept KeyboardInterrupt:\n    spi.close()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.3",
@@ -4198,7 +4284,7 @@ const DAVINCI_LESSONS = [
       "https://docs.sunfounder.com/projects/davinci-kit/en/latest/_images/image209.jpeg"
     ],
     "python_file": "2.2.3_DHT.py",
-    "python_code": "from gpiozero import OutputDevice, InputDevice\nimport time\n\n\nclass DHT11():\n    MAX_DELAY_COUINT = 100\n    BIT_1_DELAY_COUNT = 10\n    BITS_LEN = 40\n\n    def __init__(self, pin, pull_up=False):\n        self._pin = pin\n        self._pull_up = pull_up\n\n\n    def read_data(self):\n        bit_count = 0\n        delay_count = 0\n        bits = \"\"\n\n        # -------------- send start --------------\n        gpio = OutputDevice(self._pin)\n        gpio.off()\n        time.sleep(0.02)\n\n        gpio.close()\n        gpio = InputDevice(self._pin, pull_up=self._pull_up)\n\n        # -------------- wait response --------------\n        while gpio.value == 1:\n            pass\n        \n        # -------------- read data --------------\n        while bit_count < self.BITS_LEN:\n            while gpio.value == 0:\n                pass\n\n            # st = time.time()\n            while gpio.value == 1:\n                delay_count += 1\n                # break\n                if delay_count > self.MAX_DELAY_COUINT:\n                    break\n            if delay_count > self.BIT_1_DELAY_COUNT:\n                bits += \"1\"\n            else:\n                bits += \"0\"\n\n            delay_count = 0\n            bit_count += 1\n\n        # -------------- verify --------------\n        humidity_integer = int(bits[0:8], 2)\n        humidity_decimal = int(bits[8:16], 2)\n        temperature_integer = int(bits[16:24], 2)\n        temperature_decimal = int(bits[24:32], 2)\n        check_sum = int(bits[32:40], 2)\n\n        _sum = humidity_integer + humidity_decimal + temperature_integer + temperature_decimal\n\n        # print(bits)\n        # print(humidity_integer, humidity_decimal, temperature_integer, temperature_decimal)\n        # print(f'sum:{_sum}, check_sum:{check_sum}')\n        # print()\n\n        if check_sum != _sum:\n            humidity = 0.0\n            temperature = 0.0\n        else:\n            humidity = float(f'{humidity_integer}.{humidity_decimal}')\n            temperature = float(f'{temperature_integer}.{temperature_decimal}')\n\n        # -------------- return --------------\n        return humidity, temperature\n\n\nif __name__ == '__main__':\n    dht11 = DHT11(17)\n    while True:\n        humidity, temperature = dht11.read_data()\n        print(f\"{time.time():.3f}  temperature:{temperature}\u00b0C  humidity: {humidity}%\")\n        time.sleep(2)",
+    "python_code": "from gpiozero import OutputDevice, InputDevice\nimport time\n\n\nclass DHT11():\n    MAX_DELAY_COUINT = 100\n    BIT_1_DELAY_COUNT = 10\n    BITS_LEN = 40\n\n    def __init__(self, pin, pull_up=False):\n        self._pin = pin\n        self._pull_up = pull_up\n\n\n    def read_data(self):\n        bit_count = 0\n        delay_count = 0\n        bits = \"\"\n\n        # -------------- send start --------------\n        gpio = OutputDevice(self._pin)\n        gpio.off()\n        time.sleep(0.02)\n\n        gpio.close()\n        gpio = InputDevice(self._pin, pull_up=self._pull_up)\n\n        # -------------- wait response --------------\n        while gpio.value == 1:\n            pass\n        \n        # -------------- read data --------------\n        while bit_count < self.BITS_LEN:\n            while gpio.value == 0:\n                pass\n\n            # st = time.time()\n            while gpio.value == 1:\n                delay_count += 1\n                # break\n                if delay_count > self.MAX_DELAY_COUINT:\n                    break\n            if delay_count > self.BIT_1_DELAY_COUNT:\n                bits += \"1\"\n            else:\n                bits += \"0\"\n\n            delay_count = 0\n            bit_count += 1\n\n        # -------------- verify --------------\n        humidity_integer = int(bits[0:8], 2)\n        humidity_decimal = int(bits[8:16], 2)\n        temperature_integer = int(bits[16:24], 2)\n        temperature_decimal = int(bits[24:32], 2)\n        check_sum = int(bits[32:40], 2)\n\n        _sum = humidity_integer + humidity_decimal + temperature_integer + temperature_decimal\n\n        # print(bits)\n        # print(humidity_integer, humidity_decimal, temperature_integer, temperature_decimal)\n        # print(f'sum:{_sum}, check_sum:{check_sum}')\n        # print()\n\n        if check_sum != _sum:\n            humidity = 0.0\n            temperature = 0.0\n        else:\n            humidity = float(f'{humidity_integer}.{humidity_decimal}')\n            temperature = float(f'{temperature_integer}.{temperature_decimal}')\n\n        # -------------- return --------------\n        return humidity, temperature\n\n\nif __name__ == '__main__':\n    dht11 = DHT11(17)\n    while True:\n        humidity, temperature = dht11.read_data()\n        print(f\"{time.time():.3f}  temperature:{temperature}°C  humidity: {humidity}%\")\n        time.sleep(2)",
     "wiring_images": [
       "https://docs.sunfounder.com/projects/davinci-kit/en/latest/_images/image207.png"
     ],
@@ -4286,7 +4372,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place DHT11 Temp & Humidity "
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.3_DHT.py",
+    "python_code_pi5": "from gpiozero import OutputDevice, InputDevice\nimport time\n\n\nclass DHT11():\n    MAX_DELAY_COUINT = 100\n    BIT_1_DELAY_COUNT = 10\n    BITS_LEN = 40\n\n    def __init__(self, pin, pull_up=False):\n        self._pin = pin\n        self._pull_up = pull_up\n\n\n    def read_data(self):\n        bit_count = 0\n        delay_count = 0\n        bits = \"\"\n\n        # -------------- send start --------------\n        gpio = OutputDevice(self._pin)\n        gpio.off()\n        time.sleep(0.02)\n\n        gpio.close()\n        gpio = InputDevice(self._pin, pull_up=self._pull_up)\n\n        # -------------- wait response --------------\n        while gpio.value == 1:\n            pass\n        \n        # -------------- read data --------------\n        while bit_count < self.BITS_LEN:\n            while gpio.value == 0:\n                pass\n\n            # st = time.time()\n            while gpio.value == 1:\n                delay_count += 1\n                # break\n                if delay_count > self.MAX_DELAY_COUINT:\n                    break\n            if delay_count > self.BIT_1_DELAY_COUNT:\n                bits += \"1\"\n            else:\n                bits += \"0\"\n\n            delay_count = 0\n            bit_count += 1\n\n        # -------------- verify --------------\n        humidity_integer = int(bits[0:8], 2)\n        humidity_decimal = int(bits[8:16], 2)\n        temperature_integer = int(bits[16:24], 2)\n        temperature_decimal = int(bits[24:32], 2)\n        check_sum = int(bits[32:40], 2)\n\n        _sum = humidity_integer + humidity_decimal + temperature_integer + temperature_decimal\n\n        # print(bits)\n        # print(humidity_integer, humidity_decimal, temperature_integer, temperature_decimal)\n        # print(f'sum:{_sum}, check_sum:{check_sum}')\n        # print()\n\n        if check_sum != _sum:\n            humidity = 0.0\n            temperature = 0.0\n        else:\n            humidity = float(f'{humidity_integer}.{humidity_decimal}')\n            temperature = float(f'{temperature_integer}.{temperature_decimal}')\n\n        # -------------- return --------------\n        return humidity, temperature\n\n\nif __name__ == '__main__':\n    dht11 = DHT11(17)\n    while True:\n        humidity, temperature = dht11.read_data()\n        print(f\"{time.time():.3f}  temperature:{temperature}°C  humidity: {humidity}%\")\n        time.sleep(2)",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.4",
@@ -4481,7 +4571,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place PIR Motion Sensor"
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.4_PIR.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import RGBLED, MotionSensor\nfrom time import sleep\n\n# Initialize RGB LED and PIR motion sensor using GPIO Zero library\nled = RGBLED(red=18, green=27, blue=22)  # RGB LED connected to GPIO pins 18 (Red), 27 (Green), 22 (Blue)\npir = MotionSensor(17)  # PIR sensor connected to GPIO pin 17\n\ntry:\n    # Continuously monitor for motion and update LED color\n    while True:\n        if pir.motion_detected:  # Check for motion detected by PIR sensor\n            led.color = (1, 1, 0)  # Set LED color to yellow (Red + Green)\n        else:\n            led.color = (0, 0, 1)  # Set LED color to blue (only Blue)\n        sleep(0.1)  # Short delay to reduce CPU load\n\nexcept KeyboardInterrupt:\n    # Handle KeyboardInterrupt (Ctrl+C) to exit the loop gracefully\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.5",
@@ -4632,7 +4726,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place HC-SR04 Ultrasonic"
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.5_Ultrasonic.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import DistanceSensor\nfrom time import sleep\n\n# Initialize the DistanceSensor using GPIO Zero library\n# Trigger pin is connected to GPIO 23, Echo pin to GPIO 24\nsensor = DistanceSensor(echo=24, trigger=23)\n\ntry:\n    # Main loop to continuously measure and report distance\n    while True:\n        dis = sensor.distance * 100  # Measure distance and convert from meters to centimeters\n        print('Distance: {:.2f} cm'.format(dis))  # Print the distance with two decimal precision\n        sleep(0.3)  # Wait for 0.3 seconds before the next measurement\n\nexcept KeyboardInterrupt:\n    # Handle KeyboardInterrupt (Ctrl+C) to gracefully exit the loop\n    pass\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "2.2.6",
@@ -4774,7 +4872,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place MPU6050 6-Axis Gyro & "
       }
-    ]
+    ],
+    "python_file_pi5": "2.2.6_mpu6050.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nimport smbus\nimport math\nimport time\n\n# Power management registers for MPU-6050\npower_mgmt_1 = 0x6b\npower_mgmt_2 = 0x6c\n\n# Read a single byte from a specific address\ndef read_byte(adr):\n    return bus.read_byte_data(address, adr)\n\n# Read a word (2 bytes) from a specific address\ndef read_word(adr):\n    high = bus.read_byte_data(address, adr)\n    low = bus.read_byte_data(address, adr+1)\n    val = (high << 8) + low\n    return val\n\n# Convert a word to a signed value (2's complement)\ndef read_word_2c(adr):\n    val = read_word(adr)\n    if val >= 0x8000:\n        return -((65535 - val) + 1)\n    else:\n        return val\n\n# Calculate Euclidean distance\ndef dist(a, b):\n    return math.sqrt((a * a) + (b * b))\n\n# Calculate the Y-axis rotation\ndef get_y_rotation(x, y, z):\n    radians = math.atan2(x, dist(y, z))\n    return -math.degrees(radians)\n\n# Calculate the X-axis rotation\ndef get_x_rotation(x, y, z):\n    radians = math.atan2(y, dist(x, z))\n    return math.degrees(radians)\n\n# Initialize I2C communication\nbus = smbus.SMBus(1) # For Raspberry Pi Revision 2 boards\naddress = 0x68       # I2C address of the MPU-6050\n\n# Wake up the MPU-6050 as it starts in sleep mode\nbus.write_byte_data(address, power_mgmt_1, 0)\n\nwhile True:\n    time.sleep(0.1)\n    \n    # Reading gyroscope data\n    gyro_xout = read_word_2c(0x43)\n    gyro_yout = read_word_2c(0x45)\n    gyro_zout = read_word_2c(0x47)\n\n    # Printing gyroscope data (raw and scaled)\n    print(\"gyro_xout:\", gyro_xout, \"scaled:\", (gyro_xout / 131))\n    print(\"gyro_yout:\", gyro_yout, \"scaled:\", (gyro_yout / 131))\n    print(\"gyro_zout:\", gyro_zout, \"scaled:\", (gyro_zout / 131))\n\n    # Reading accelerometer data\n    accel_xout = read_word_2c(0x3b)\n    accel_yout = read_word_2c(0x3d)\n    accel_zout = read_word_2c(0x3f)\n\n    # Scaling accelerometer data\n    accel_xout_scaled = accel_xout / 16384.0\n    accel_yout_scaled = accel_yout / 16384.0\n    accel_zout_scaled = accel_zout / 16384.0\n\n    # Printing accelerometer data (raw and scaled)\n    print(\"accel_xout:\", accel_xout, \"scaled:\", accel_xout_scaled)\n    print(\"accel_yout:\", accel_yout, \"scaled:\", accel_yout_scaled)\n    print(\"accel_zout:\", accel_zout, \"scaled:\", accel_zout_scaled)\n\n    # Printing calculated rotation angles\n    print(\"x rotation:\", get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))\n    print(\"y rotation:\", get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled))\n\n    time.sleep(1)\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.1",
@@ -4885,7 +4987,7 @@ const DAVINCI_LESSONS = [
         },
         {
           "type": "resistor",
-          "value": "220\u03a9",
+          "value": "220Ω",
           "bands": [
             "#e53935",
             "#e53935",
@@ -4900,7 +5002,7 @@ const DAVINCI_LESSONS = [
             "col": 30,
             "row": "bot_plus"
           },
-          "label": "220\u03a9 Resistor"
+          "label": "220Ω Resistor"
         }
       ],
       "wires": [
@@ -5010,9 +5112,13 @@ const DAVINCI_LESSONS = [
       {
         "kind": "component",
         "color": "#8b9bb4",
-        "text": "Place 220\u03a9 Resistor"
+        "text": "Place 220Ω Resistor"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.10_AlarmBell.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED, Button, TonalBuzzer\nimport time\nimport threading\n\n# Initialize TonalBuzzer on GPIO pin 22\nBeepPin = TonalBuzzer(22)\n\n# Initialize LEDs on GPIO pins 17 and 27\nALedPin = LED(17)\nBLedPin = LED(27)\n\n# Initialize Button on GPIO pin 18\nswitchPin = Button(18)\n\n# Global flag to control the buzzer and LED states\nflag = 0\n\ndef ledWork():\n    \"\"\"\n    Control LED blinking pattern based on the flag state.\n    When flag is set, alternately blink ALedPin and BLedPin.\n    \"\"\"\n    while True:\n        if flag:\n            # Alternate blinking of LEDs\n            ALedPin.on()\n            time.sleep(0.5)\n            ALedPin.off()\n            BLedPin.on()\n            time.sleep(0.5)\n            BLedPin.off()\n        else:\n            # Turn off both LEDs if flag is not set\n            ALedPin.off()\n            BLedPin.off()\n\n# Define the musical tune as a list of notes and their durations\ntune = [\n    ('C4', 0.1), ('E4', 0.1), ('G4', 0.1), \n    (None, 0.1), \n    ('E4', 0.1), ('G4', 0.1), ('C5', 0.1), \n    (None, 0.1), \n    ('C5', 0.1), ('G4', 0.1), ('E4', 0.1), \n    (None, 0.1), \n    ('G4', 0.1), ('E4', 0.1), ('C4', 0.1), \n    (None, 0.1)\n]\n\ndef buzzerWork():\n    \"\"\"\n    Play a tune using the buzzer based on the flag state.\n    The tune is played only when the flag is set.\n    \"\"\"\n    while True:\n        for note, duration in tune:\n            if flag == 0:\n                break\n            print(note)  # Output the current note to the console\n            BeepPin.play(note)  # Play the current note\n            time.sleep(duration)  # Pause for the duration of the note\n        BeepPin.stop()  # Stop the buzzer after playing the tune\n\ndef main():\n    \"\"\"\n    Monitor button press to update the flag state.\n    Sets the flag when the button is pressed.\n    \"\"\"\n    global flag\n    while True:\n        flag = 1 if switchPin.is_pressed else 0\n\ntry:\n    # Initialize and start threads for buzzer and LED control\n    tBuzz = threading.Thread(target=buzzerWork)\n    tBuzz.start()\n    tLed = threading.Thread(target=ledWork)\n    tLed.start()\n    main()\n\nexcept KeyboardInterrupt:\n    # Stop the buzzer and turn off LEDs on program interruption\n    BeepPin.stop()\n    ALedPin.off()    \n    BLedPin.off()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.2",
@@ -5191,7 +5297,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Welcome Device (PI"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.2_Welcome.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import LED, MotionSensor, Servo, TonalBuzzer\nimport time\n\n# GPIO pin setup for LED, motion sensor (PIR), and buzzer\nledPin = LED(6)\npirPin = MotionSensor(21)\nbuzPin = TonalBuzzer(27)\n\n# Servo motor pulse width correction factor and calculation\nmyCorrection = 0.45\nmaxPW = (2.0 + myCorrection) / 1000  # Maximum pulse width\nminPW = (1.0 - myCorrection) / 1000  # Minimum pulse width\n\n# Initialize servo with custom pulse widths\nservoPin = Servo(25, min_pulse_width=minPW, max_pulse_width=maxPW)\n\n# Musical tune for buzzer, with notes and durations\ntune = [('C#4', 0.2), ('D4', 0.2), (None, 0.2),\n        ('Eb4', 0.2), ('E4', 0.2), (None, 0.6),\n        ('F#4', 0.2), ('G4', 0.2), (None, 0.6),\n        ('Eb4', 0.2), ('E4', 0.2), (None, 0.2),\n        ('F#4', 0.2), ('G4', 0.2), (None, 0.2),\n        ('C4', 0.2), ('B4', 0.2), (None, 0.2),\n        ('F#4', 0.2), ('G4', 0.2), (None, 0.2),\n        ('B4', 0.2), ('Bb4', 0.5), (None, 0.6),\n        ('A4', 0.2), ('G4', 0.2), ('E4', 0.2), \n        ('D4', 0.2), ('E4', 0.2)]\n\ndef setAngle(angle):\n    \"\"\"\n    Move the servo to a specified angle.\n    :param angle: Angle in degrees (0-180).\n    \"\"\"\n    value = float(angle / 180)  # Convert angle to servo value\n    servoPin.value = value      # Set servo position\n    time.sleep(0.001)           # Short delay for servo movement\n\ndef doorbell():\n    \"\"\"\n    Play a musical tune using the buzzer.\n    \"\"\"\n    for note, duration in tune:\n        buzPin.play(note)       # Play the note\n        time.sleep(float(duration))  # Duration of the note\n    buzPin.stop()               # Stop buzzer after playing the tune\n\ndef closedoor():\n    # Turn off LED and move servo to close door\n    ledPin.off()\n    for i in range(180, -1, -1):\n        setAngle(i)             # Move servo from 180 to 0 degrees\n        time.sleep(0.001)       # Short delay for smooth movement\n    time.sleep(1)               # Wait after closing door\n\ndef opendoor():\n    # Turn on LED, open door (move servo), play tune, close door\n    ledPin.on()\n    for i in range(0, 181):\n        setAngle(i)             # Move servo from 0 to 180 degrees\n        time.sleep(0.001)       # Short delay for smooth movement\n    time.sleep(1)               # Wait before playing the tune\n    doorbell()                  # Play the doorbell tune\n    closedoor()                 # Close the door after the tune\n\ndef loop():\n    # Main loop to check for motion and operate door\n    while True:\n        if pirPin.motion_detected:\n            opendoor()               # Open door if motion detected\n        time.sleep(0.1)              # Short delay in loop\n\ntry:\n    loop()\nexcept KeyboardInterrupt:\n    # Clean up GPIO on user interrupt (e.g., Ctrl+C)\n    buzPin.stop()\n    ledPin.off()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.3",
@@ -5391,7 +5501,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Reversing Alarm Ra"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.3_ReversingAlarm.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nimport LCD1602\nimport time\nfrom gpiozero import DistanceSensor, Buzzer\n\n# Initialize the ultrasonic sensor with GPIO pins\nsensor = DistanceSensor(echo=24, trigger=23)  # Echo pin is GPIO 24, Trigger pin is GPIO 23\n\n# Initialize the buzzer connected to GPIO pin 17\nbuzzer = Buzzer(17)\n\ndef lcdsetup():\n    # Initialize the LCD with I2C address and enable backlight\n    LCD1602.init(0x27, 1)  # 0x27 is the I2C address of the LCD\n    LCD1602.clear()  # Clear the LCD display\n    # Display startup messages on LCD\n    LCD1602.write(0, 0, 'Ultrasonic Starting')\n    LCD1602.write(1, 1, 'By SunFounder')\n    time.sleep(2)  # Wait for 2 seconds\n\ndef distance():\n    # Calculate and return the distance measured by the sensor\n    dis = sensor.distance * 100  # Convert distance to centimeters\n    print('Distance: {:.2f} cm'.format(dis))  # Print distance with two decimal places\n    time.sleep(0.3)  # Wait for 0.3 seconds before next measurement\n    return dis\n\ndef loop():\n    # Continuously measure distance and update LCD and buzzer\n    while True:\n        dis = distance()  # Get the current distance\n        # Display distance and handle alerts based on distance\n        if dis > 400:  # Check if distance is out of range\n            LCD1602.clear()\n            LCD1602.write(0, 0, 'Error')\n            LCD1602.write(3, 1, 'Out of range')\n            time.sleep(0.5)\n        else:\n            # Display current distance on LCD\n            LCD1602.clear()\n            LCD1602.write(0, 0, 'Distance is')\n            LCD1602.write(5, 1, str(round(dis, 2)) + ' cm')\n            # Adjust buzzer frequency based on distance\n            if dis >= 50:\n                time.sleep(0.5)\n            elif 20 < dis < 50:\n                # Medium distance: medium buzzer frequency\n                for _ in range(2):\n                    buzzer.on()\n                    time.sleep(0.05)\n                    buzzer.off()\n                    time.sleep(0.2)\n            elif dis <= 20:\n                # Close distance: high buzzer frequency\n                for _ in range(5):\n                    buzzer.on()\n                    time.sleep(0.05)\n                    buzzer.off()\n                    time.sleep(0.05)\n\ntry:\n    lcdsetup()  # Setup the LCD display\n    loop()      # Start the measurement loop\nexcept KeyboardInterrupt:\n    # Turn off buzzer and clear LCD on user interrupt (e.g., Ctrl+C)\n    buzzer.off()\n    LCD1602.clear()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.4",
@@ -5585,7 +5699,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ULN2003 / L293D"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.4-2_Smart_fan_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import Motor, Button\nfrom time import sleep\nimport spidev\nimport math\n\n# Initialize SPI for MCP3008\nspi = spidev.SpiDev()\nspi.open(0, 0)  # Bus 0, CE0 (GPIO8 / physical pin 24)\nspi.max_speed_hz = 1000000  # 1 MHz\n\n# Initialize GPIO pins for the button and motor control\nBtnPin = Button(22)  # GPIO22 (physical pin 15)\nmotor = Motor(forward=5, backward=6, enable=13)  # GPIO5, GPIO6, GPIO13\n\n# Initialize variables to track the motor speed level and temperatures\nlevel = 0\ncurrentTemp = 0\nmarkTemp = 0\n\ndef read_adc(channel):\n    \"\"\"\n    Reads analog value from MCP3008 channel (0–7).\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    adc = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((adc[1] & 0x03) << 8) | adc[2]\n    return value\n\ndef temperature():\n    \"\"\"\n    Reads and calculates the current temperature from the sensor.\n    Returns:\n        float: The current temperature in Celsius.\n    \"\"\"\n    analogVal = read_adc(0)  # Assuming thermistor connected to CH0\n    Vr = 3.3 * analogVal / 1023.0  # For 3.3V system\n    Rt = 10000.0 * Vr / (3.3 - Vr)\n    temp = 1 / (((math.log(Rt / 10000.0)) / 3950.0) + (1 / (273.15 + 25.0)))\n    Cel = temp - 273.15\n    return Cel\n\ndef motor_run(level):\n    \"\"\"\n    Adjusts the motor speed based on the specified level.\n    Args:\n        level (int): Desired motor speed level.\n    Returns:\n        int: Adjusted motor speed level.\n    \"\"\"\n    if level == 0:\n        motor.stop()\n        return 0\n    if level >= 4:\n        level = 4\n    motor.forward(speed=float(level / 4))\n    return level\n\ndef changeLevel():\n    \"\"\"\n    Changes the motor speed level when the button is pressed and updates the reference temperature.\n    \"\"\"\n    global level, currentTemp, markTemp\n    print(\"Button pressed\")\n    level = (level + 1) % 5\n    markTemp = currentTemp\n\n# Bind the button press event to changeLevel function\nBtnPin.when_pressed = changeLevel\n\ndef main():\n    \"\"\"\n    Main function to continuously monitor and respond to temperature changes.\n    \"\"\"\n    global level, currentTemp, markTemp\n    markTemp = temperature()\n    while True:\n        currentTemp = temperature()\n        if level != 0:\n            if currentTemp - markTemp <= -2:\n                level -= 1\n                markTemp = currentTemp\n            elif currentTemp - markTemp >= 2:\n                if level < 4:\n                    level += 1\n                markTemp = currentTemp\n        level = motor_run(level)\n        sleep(0.2)\n\n# Run the main function and handle KeyboardInterrupt\ntry:\n    main()\nexcept KeyboardInterrupt:\n    motor.stop()\n    spi.close()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.5",
@@ -5845,7 +5963,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ADC0834"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.5-2_Battery_indicator_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED\nimport spidev\nimport time\n\n# List of GPIO pins to which LEDs are connected\nledPins = [25, 12, 16, 20, 21, 5, 6, 13, 19, 26]\n# Initialize LED objects for each pin in the list\nleds = [LED(pin) for pin in ledPins]\n\n# Setup SPI for MCP3008\nspi = spidev.SpiDev()\nspi.open(0, 0)              # Open SPI bus 0, device (CE0)\nspi.max_speed_hz = 1000000  # Set SPI speed to 1 MHz\n\ndef read_adc(channel=0):\n    \"\"\"\n    Reads analog value from MCP3008 channel (default CH0).\n    Returns a 10-bit value .\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    r = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((r[1] & 0x03) << 8) | r[2]\n    return value\n\ndef LedBarGraph(value):\n    # Turn off all LEDs\n    for i in range(10):\n        leds[i].off()\n    # Turn on LEDs up to the specified value\n    for i in range(min(value, 10)):\n        leds[i].on()\n\ntry:\n    # Main loop to continuously update LED bar graph\n    while True:\n        analogVal = read_adc(0)  # Read from CH0\n        LedBarGraph(int(analogVal / 102.4)) \n        time.sleep(0.1)\nexcept KeyboardInterrupt:\n    # Turn off all LEDs when program is interrupted\n    for i in range(10):\n        leds[i].off()\n    spi.close()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.6",
@@ -6036,7 +6158,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Motion-Controlled Serv"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.6_motion_control.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice\nimport smbus\nimport math\nimport time\n\n# Initialize power management registers for MPU6050\npower_mgmt_1 = 0x6b\npower_mgmt_2 = 0x6c\n\n# Set up I2C communication with MPU6050\nbus = smbus.SMBus(1)  # Initialize SMBus\naddress = 0x68        # MPU6050 I2C address\nbus.write_byte_data(address, power_mgmt_1, 0)  # Wake up MPU6050\n\n# Initialize motor pins to GPIO pins 18, 23, 24, 25\nmotorPin = [OutputDevice(pin) for pin in (18, 23, 24, 25)]\n\n# Set motor rotation speed parameters\nrolePerMinute = 15\nstepsPerRevolution = 2048\n# Calculate delay between steps for desired RPM\nstepSpeed = (60 / rolePerMinute) / stepsPerRevolution\n\n# Read a single byte from the specified I2C address\ndef read_byte(adr):\n    return bus.read_byte_data(address, adr)\n\n# Read a word (2 bytes) from the specified I2C address\ndef read_word(adr):\n    high = bus.read_byte_data(address, adr)\n    low = bus.read_byte_data(address, adr + 1)\n    val = (high << 8) + low\n    return val\n\n# Read a word in 2's complement form\ndef read_word_2c(adr):\n    val = read_word(adr)\n    if val >= 0x8000:\n        return -((65535 - val) + 1)\n    else:\n        return val\n\n# Calculate Euclidean distance between two points\ndef dist(a, b):\n    return math.sqrt((a * a) + (b * b))\n\n# Calculate Y-axis rotation\ndef get_y_rotation(x, y, z):\n    radians = math.atan2(x, dist(y, z))\n    return -math.degrees(radians)\n\n# Calculate X-axis rotation\ndef get_x_rotation(x, y, z):\n    radians = math.atan2(y, dist(x, z))\n    return math.degrees(radians)\n\n# Get tilt angle from MPU6050\ndef mpu6050():\n    accel_xout = read_word_2c(0x3b)\n    accel_yout = read_word_2c(0x3d)\n    accel_zout = read_word_2c(0x3f)\n    accel_xout_scaled = accel_xout / 16384.0\n    accel_yout_scaled = accel_yout / 16384.0\n    accel_zout_scaled = accel_zout / 16384.0\n    angle = get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)\n    return angle\n\n# Control stepper motor rotation\ndef rotary(direction):\n    if direction == 'c':\n        # Clockwise rotation sequence\n        for j in range(4):\n            for i in range(4):\n                if 0x99 >> j & (0x08 >> i):\n                    motorPin[i].on()\n                else:\n                    motorPin[i].off()\n                time.sleep(stepSpeed)\n    elif direction == 'a':\n        # Anti-clockwise rotation sequence\n        for j in range(4):\n            for i in range(4):\n                if 0x99 << j & (0x08 >> i):\n                    motorPin[i].on()\n                else:\n                    motorPin[i].off()\n                time.sleep(stepSpeed)\n\n# Main loop for continuously reading tilt angle and controlling motor\ntry:\n    while True:\n        angle = mpu6050()\n        if angle >= 45:\n            rotary('a')  # Rotate anti-clockwise for positive tilt\n        elif angle <= -45:\n            rotary('c')  # Rotate clockwise for negative tilt\nexcept KeyboardInterrupt:\n    # Turn off all motor pins on keyboard interrupt\n    for pin in motorPin:\n        pin.off()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.7",
@@ -6305,7 +6431,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.7_TrafficLight.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import OutputDevice, LED\nimport threading\n\n# Setup GPIO pins for 74HC595 shift register\nSDI = OutputDevice(24)   # Serial Data Input\nRCLK = OutputDevice(23)  # Register Clock\nSRCLK = OutputDevice(18) # Shift Register Clock\n\n# Setup GPIO pins for digit selection on 7-segment display\nplacePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]\n\n# Segment codes for numbers 0-9 on 7-segment display\nnumber = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)\n\n# Setup GPIO pins for traffic light LEDs\nledPinR = LED(25) # Red LED\nledPinG = LED(8)  # Green LED\nledPinY = LED(7)  # Yellow LED\n\n# Duration settings for traffic lights\ngreenLight = 30\nyellowLight = 5\nredLight = 60\n\n# Traffic light color names\nlightColor = (\"Red\", \"Green\", \"Yellow\")\n\n# Initialize state variables\ncolorState = 0\ncounter = 60\ntimer1 = None\n\ndef setup():\n    \"\"\" Initialize the traffic light system and start the timer. \"\"\"\n    global timer1\n    timer1 = threading.Timer(1.0, timer)\n    timer1.start()\n\ndef clearDisplay():\n    \"\"\" Clear the 7-segment display. \"\"\"\n    for _ in range(8):\n        SDI.on()\n        SRCLK.on()\n        SRCLK.off()\n    RCLK.on()\n    RCLK.off()\n\ndef hc595_shift(data):\n    \"\"\" Shift data to the 74HC595 shift register for digit display. \"\"\"\n    for i in range(8):\n        SDI.value = 0x80 & (data << i)\n        SRCLK.on()\n        SRCLK.off()\n    RCLK.on()\n    RCLK.off()\n\ndef pickDigit(digit):\n    \"\"\" Select a specific digit to display on the 7-segment display. \"\"\"\n    for pin in placePin:\n        pin.off()\n    placePin[digit].on()\n\ndef timer():\n    \"\"\" Handle the timing for traffic light changes. \"\"\"\n    global counter, colorState, timer1\n    timer1 = threading.Timer(1.0, timer)\n    timer1.start()\n    counter -= 1\n    if counter == 0:\n        counter = [greenLight, yellowLight, redLight][colorState]\n        colorState = (colorState + 1) % 3\n    print(f\"counter : {counter}    color: {lightColor[colorState]}\")\n\ndef lightup():\n    \"\"\" Update the traffic light LED based on the current state. \"\"\"\n    global colorState\n    ledPinR.off()\n    ledPinG.off()\n    ledPinY.off()\n    [ledPinR, ledPinG, ledPinY][colorState].on()\n\ndef display():\n    \"\"\" Display the current counter value on the 7-segment display. \"\"\"\n    global counter\n\n    for i in range(4):\n        digit = counter // (10 ** (3 - i)) % 10\n        if i == 0 and digit == 0:\n            continue\n        clearDisplay()\n        pickDigit(3 - i)\n        hc595_shift(number[digit])\n\ndef loop():\n    \"\"\" Main loop to continuously update display and lights. \"\"\"\n    while True:\n        display()\n        lightup()\n\ndef destroy():\n    \"\"\" Clean up resources when the script is terminated. \"\"\"\n    global timer1\n    timer1.cancel()\n    ledPinR.off()\n    ledPinG.off()\n    ledPinY.off()\n\ntry:\n    setup()\n    loop()\nexcept KeyboardInterrupt:\n    destroy()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.8",
@@ -6519,7 +6649,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place ADC0834"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.8-2_Overheat_monitor_zero.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nimport LCD1602\nfrom gpiozero import LED, Buzzer, Button\nimport spidev\nimport time\nimport math\n\n# Initialize joystick button, buzzer, and LED\nJoy_BtnPin = Button(22)  # GPIO22, Pin15\nbuzzPin = Buzzer(23)     # GPIO23, Pin16\nledPin = LED(24)         # GPIO24, Pin18\n\n# Set initial upper temperature threshold\nupperTem = 40\n\n# Initialize SPI for MCP3008 (Bus 0, CE0 -> GPIO8 / Pin24)\nspi = spidev.SpiDev()\nspi.open(0, 0)\nspi.max_speed_hz = 1000000  # 1 MHz\n\n# Initialize LCD (I2C address 0x27, backlight on)\nLCD1602.init(0x27, 1)\n\ndef read_adc(channel):\n    \"\"\"\n    Read analog value from MCP3008 (0–7)\n    \"\"\"\n    if channel < 0 or channel > 7:\n        return -1\n    adc = spi.xfer2([1, (8 + channel) << 4, 0])\n    value = ((adc[1] & 0x03) << 8) | adc[2]\n    return value\n\ndef get_joystick_value():\n    \"\"\"\n    Reads the joystick values and returns a change value based on the joystick's position.\n    \"\"\"\n    x_val = read_adc(1)\n    y_val = read_adc(2)\n    if x_val > 800:\n        return 1\n    elif x_val < 200:\n        return -1\n    elif y_val > 800:\n        return -10\n    elif y_val < 200:\n        return 10\n    else:\n        return 0\n\ndef upper_tem_setting():\n    \"\"\"\n    Adjusts and displays the upper temperature threshold on the LCD.\n    \"\"\"\n    global upperTem\n    LCD1602.write(0, 0, 'Upper Adjust: ')\n    change = int(get_joystick_value())\n    upperTem += change\n    strUpperTem = str(upperTem)\n    LCD1602.write(0, 1, strUpperTem)\n    LCD1602.write(len(strUpperTem), 1, '              ')\n    time.sleep(0.1)\n\ndef temperature():\n    \"\"\"\n    Reads the current temperature from the sensor and returns it in Celsius.\n    \"\"\"\n    analogVal = read_adc(0)\n    Vr = 3.3 * analogVal / 1023.0  # Voltage across the fixed resistor\n    if Vr == 0:\n        return 0  # Prevent division by zero\n    Rt = 10000.0 * (3.3 - Vr) / Vr  # Adjusted formula: thermistor voltage is (3.3 - Vr)\n    temp = 1 / (((math.log(Rt / 10000.0)) / 3950.0) + (1 / (273.15 + 25.0)))\n    Cel = temp - 273.15\n    return round(Cel, 2)\n\ndef monitoring_temp():\n    \"\"\"\n    Monitors and displays the current temperature and upper temperature threshold.\n    Activates buzzer and LED if the temperature exceeds the upper limit.\n    \"\"\"\n    global upperTem\n    Cel = temperature()\n    LCD1602.write(0, 0, 'Temp: ')\n    LCD1602.write(0, 1, 'Upper: ')\n    LCD1602.write(6, 0, str(Cel))\n    LCD1602.write(7, 1, str(upperTem))\n    time.sleep(0.1)\n    if Cel >= upperTem:\n        buzzPin.on()\n        ledPin.on()\n    else:\n        buzzPin.off()\n        ledPin.off()\n\n# Main execution loop\ntry:\n    lastState = 1\n    stage = 0\n    while True:\n        currentState = Joy_BtnPin.value\n        if currentState == 1 and lastState == 0:\n            stage = (stage + 1) % 2\n            time.sleep(0.1)\n            LCD1602.clear()\n        lastState = currentState\n        if stage == 1:\n            upper_tem_setting()\n        else:\n            monitoring_temp()\nexcept KeyboardInterrupt:\n    LCD1602.clear()\n    spi.close()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.9",
@@ -6816,7 +6950,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 4x4 Keypad Header"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.9_PasswordLock.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import DigitalOutputDevice, Button\nfrom time import sleep\nimport LCD1602\n\nclass Keypad:\n    def __init__(self, rows_pins, cols_pins, keys):\n        \"\"\"\n        Initialize the Keypad with specified row and column pins and keys.\n        :param rows_pins: List of GPIO pins for the rows.\n        :param cols_pins: List of GPIO pins for the columns.\n        :param keys: List of keys in the keypad layout.\n        \"\"\"\n        self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]  # Row pins setup\n        self.cols = [Button(pin, pull_up=False) for pin in cols_pins]  # Column pins setup\n        self.keys = keys  # Keypad key layout\n\n    def read(self):\n        \"\"\"\n        Read and return a list of keys that are currently pressed.\n        :return: List of pressed keys.\n        \"\"\"\n        pressed_keys = []\n        for i, row in enumerate(self.rows):\n            row.on()  # Activate current row\n            for j, col in enumerate(self.cols):\n                if col.is_pressed:\n                    index = i * len(self.cols) + j\n                    pressed_keys.append(self.keys[index])\n            row.off()  # Deactivate row after checking\n        return pressed_keys\n\n# Password verification setup\nLENS = 4\npassword = ['1', '9', '8', '4']  # Preset password\ntestword = ['0', '0', '0', '0']  # User input storage\nkeyIndex = 0  # Index for input keys\n\ndef check():\n    \"\"\"\n    Check if the entered password matches the preset password.\n    :return: 1 if match, 0 otherwise.\n    \"\"\"\n    for i in range(LENS):\n        if password[i] != testword[i]:\n            return 0\n    return 1\n\ndef setup():\n    \"\"\"\n    Setup the keypad and LCD display.\n    \"\"\"\n    global keypad, last_key_pressed\n    # Pin configuration for keypad\n    rows_pins = [18, 23, 24, 25]\n    cols_pins = [10, 22, 27, 17]\n    keys = [\"1\", \"2\", \"3\", \"A\",\n            \"4\", \"5\", \"6\", \"B\",\n            \"7\", \"8\", \"9\", \"C\",\n            \"*\", \"0\", \"#\", \"D\"]\n\n    # Initialize keypad and LCD\n    keypad = Keypad(rows_pins, cols_pins, keys)\n    last_key_pressed = []\n    LCD1602.init(0x27, 1)  # Initialize LCD\n    LCD1602.clear()\n    LCD1602.write(0, 0, 'WELCOME!')\n    LCD1602.write(2, 1, 'Enter password')\n    sleep(2)\n\ndef loop():\n    \"\"\"\n    Main loop for handling keypad input and password verification.\n    \"\"\"\n    global keyIndex, LENS, keypad, last_key_pressed\n    while True:\n        pressed_keys = keypad.read()\n        if pressed_keys and pressed_keys != last_key_pressed:\n            if keyIndex < LENS:\n                LCD1602.clear()\n                LCD1602.write(0, 0, \"Enter password:\")\n                LCD1602.write(15 - keyIndex, 1, pressed_keys[0])\n                testword[keyIndex] = pressed_keys[0]\n                keyIndex += 1\n\n            if keyIndex == LENS:\n                if check() == 0:\n                    LCD1602.clear()\n                    LCD1602.write(3, 0, \"WRONG KEY!\")\n                    LCD1602.write(0, 1, \"please try again\")\n                else:\n                    LCD1602.clear()\n                    LCD1602.write(4, 0, \"CORRECT!\")\n                    LCD1602.write(2, 1, \"welcome back\")\n                keyIndex = 0  # Reset key index after checking\n\n        last_key_pressed = pressed_keys\n        sleep(0.1)\n\ntry:\n    setup()\n    loop()\nexcept KeyboardInterrupt:\n    LCD1602.clear()  # Clear LCD display on interrupt\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.10",
@@ -6995,7 +7133,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Burglar Alarm Bell"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.10_AlarmBell.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import LED, Button, TonalBuzzer\nimport time\nimport threading\n\n# Initialize TonalBuzzer on GPIO pin 22\nBeepPin = TonalBuzzer(22)\n\n# Initialize LEDs on GPIO pins 17 and 27\nALedPin = LED(17)\nBLedPin = LED(27)\n\n# Initialize Button on GPIO pin 18\nswitchPin = Button(18)\n\n# Global flag to control the buzzer and LED states\nflag = 0\n\ndef ledWork():\n    \"\"\"\n    Control LED blinking pattern based on the flag state.\n    When flag is set, alternately blink ALedPin and BLedPin.\n    \"\"\"\n    while True:\n        if flag:\n            # Alternate blinking of LEDs\n            ALedPin.on()\n            time.sleep(0.5)\n            ALedPin.off()\n            BLedPin.on()\n            time.sleep(0.5)\n            BLedPin.off()\n        else:\n            # Turn off both LEDs if flag is not set\n            ALedPin.off()\n            BLedPin.off()\n\n# Define the musical tune as a list of notes and their durations\ntune = [\n    ('C4', 0.1), ('E4', 0.1), ('G4', 0.1), \n    (None, 0.1), \n    ('E4', 0.1), ('G4', 0.1), ('C5', 0.1), \n    (None, 0.1), \n    ('C5', 0.1), ('G4', 0.1), ('E4', 0.1), \n    (None, 0.1), \n    ('G4', 0.1), ('E4', 0.1), ('C4', 0.1), \n    (None, 0.1)\n]\n\ndef buzzerWork():\n    \"\"\"\n    Play a tune using the buzzer based on the flag state.\n    The tune is played only when the flag is set.\n    \"\"\"\n    while True:\n        for note, duration in tune:\n            if flag == 0:\n                break\n            print(note)  # Output the current note to the console\n            BeepPin.play(note)  # Play the current note\n            time.sleep(duration)  # Pause for the duration of the note\n        BeepPin.stop()  # Stop the buzzer after playing the tune\n\ndef main():\n    \"\"\"\n    Monitor button press to update the flag state.\n    Sets the flag when the button is pressed.\n    \"\"\"\n    global flag\n    while True:\n        flag = 1 if switchPin.is_pressed else 0\n\ntry:\n    # Initialize and start threads for buzzer and LED control\n    tBuzz = threading.Thread(target=buzzerWork)\n    tBuzz.start()\n    tLed = threading.Thread(target=ledWork)\n    tLed.start()\n    main()\n\nexcept KeyboardInterrupt:\n    # Stop the buzzer and turn off LEDs on program interruption\n    BeepPin.stop()\n    ALedPin.off()    \n    BLedPin.off()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.11",
@@ -7132,7 +7274,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place Morse Code Generat"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.11_MorseCodeGenerator.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import Buzzer, LED\nimport time\n\n# Initialize Buzzer and LED to GPIO pins\nBeepPin = Buzzer(22)\nALedPin = LED(17)\n\n# Morse code representation for characters\nMORSECODE = {\n    'A': '01', 'B': '1000', 'C': '1010', 'D': '100', 'E': '0', 'F': '0010', 'G': '110',\n    'H': '0000', 'I': '00', 'J': '0111', 'K': '101', 'L': '0100', 'M': '11', 'N': '10',\n    'O': '111', 'P': '0110', 'Q': '1101', 'R': '010', 'S': '000', 'T': '1',\n    'U': '001', 'V': '0001', 'W': '011', 'X': '1001', 'Y': '1011', 'Z': '1100',\n    '1': '01111', '2': '00111', '3': '00011', '4': '00001', '5': '00000',\n    '6': '10000', '7': '11000', '8': '11100', '9': '11110', '0': '11111',\n    '?': '001100', '/': '10010', ',': '110011', '.': '010101', ';': '101010',\n    '!': '101011', '@': '011010', ':': '111000',\n}\n\ndef on():\n    \"\"\" Turn on the buzzer and LED. \"\"\"\n    BeepPin.on()\n    ALedPin.on()\n\ndef off():\n    \"\"\" Turn off the buzzer and LED. \"\"\"\n    BeepPin.off()\n    ALedPin.off()\n\ndef beep(dt):  # dt for delay time.\n    \"\"\"\n    Produce a beep sound and LED flash for the specified duration.\n    :param dt: Duration for the beep and flash.\n    \"\"\"\n    on()\n    time.sleep(dt)\n    off()\n    time.sleep(dt)\n\ndef morsecode(code):\n    \"\"\"\n    Convert the input code into Morse code and signal it using the buzzer and LED.\n    :param code: The text to be converted to Morse code.\n    \"\"\"\n    pause = 0.25\n    for letter in code:\n        for tap in MORSECODE[letter]:\n            if tap == '0':\n                beep(pause / 2)  # Short beep for dot\n            if tap == '1':\n                beep(pause)      # Long beep for dash\n        time.sleep(pause)  # Pause between letters\n\ndef destroy():\n    \"\"\" Clean up resources on script termination. \"\"\"\n    print(\"\")\n    BeepPin.off()\n    ALedPin.off()\n\ntry:\n    while True:\n        code = input(\"Please input the messenger:\")\n        code = code.upper()  # Convert to uppercase for Morse code lookup\n        print(code)\n        morsecode(code)\nexcept KeyboardInterrupt:\n    destroy()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.12",
@@ -7378,7 +7524,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.12_GAME_GuessNumber.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import DigitalOutputDevice, Button\nfrom time import sleep\nimport LCD1602\nimport random\n\nclass Keypad:\n    def __init__(self, rows_pins, cols_pins, keys):\n        \"\"\"\n        Initialize the keypad with specified row and column pins and key layout.\n        :param rows_pins: List of GPIO pins for the rows.\n        :param cols_pins: List of GPIO pins for the columns.\n        :param keys: Layout of keys on the keypad.\n        \"\"\"\n        self.rows = [DigitalOutputDevice(pin) for pin in rows_pins]  # Setup row pins\n        self.cols = [Button(pin, pull_up=False) for pin in cols_pins]  # Setup column pins\n        self.keys = keys  # Define keypad layout\n\n    def read(self):\n        \"\"\"\n        Read and return the currently pressed keys.\n        :return: List of pressed keys.\n        \"\"\"\n        pressed_keys = []\n        for i, row in enumerate(self.rows):\n            row.on()  # Activate current row\n            for j, col in enumerate(self.cols):\n                if col.is_pressed:\n                    index = i * len(self.cols) + j\n                    pressed_keys.append(self.keys[index])  # Append pressed key\n            row.off()  # Deactivate row\n        return pressed_keys\n\n# Game-related variables\ncount = 0\npointValue = 0\nupper = 99\nlower = 0\n\ndef setup():\n    \"\"\"\n    Setup function for initializing the keypad and LCD display.\n    \"\"\"\n    global keypad, last_key_pressed, keys\n    rowsPins = [18, 23, 24, 25]\n    colsPins = [10, 22, 27, 17]\n    keys = [\"1\", \"2\", \"3\", \"A\",\n            \"4\", \"5\", \"6\", \"B\",\n            \"7\", \"8\", \"9\", \"C\",\n            \"*\", \"0\", \"#\", \"D\"]\n    keypad = Keypad(rowsPins, colsPins, keys)\n    last_key_pressed = []\n    LCD1602.init(0x27, 1)  # Initialize LCD\n    LCD1602.clear()\n    LCD1602.write(0, 0, 'Welcome!')\n    LCD1602.write(0, 1, 'Press A to Start!')\n\ndef init_new_value():\n    \"\"\"\n    Initialize a new target value and reset game parameters.\n    \"\"\"\n    global pointValue, upper, lower, count\n    pointValue = random.randint(0, 99)\n    upper = 99\n    lower = 0\n    count = 0\n    print('point is %d' % pointValue)\n\ndef detect_point():\n    \"\"\"\n    Check if the guessed number is the target, too high, or too low.\n    :return: 1 if correct guess, 0 otherwise.\n    \"\"\"\n    global count, upper, lower\n    if count > pointValue and count < upper:\n        upper = count\n    elif count < pointValue and count > lower:\n        lower = count\n    elif count == pointValue:\n        count = 0\n        return 1\n    count = 0\n    return 0\n\ndef lcd_show_input(result):\n    \"\"\"\n    Display the current game state and results on the LCD.\n    :param result: Result of the last guess (0 or 1).\n    \"\"\"\n    LCD1602.clear()\n    if result == 1:\n        LCD1602.write(0, 1, 'You have got it!')\n        sleep(5)\n        init_new_value()\n        lcd_show_input(0)\n    else:\n        LCD1602.write(0, 0, 'Enter number:')\n        LCD1602.write(13, 0, str(count))\n        LCD1602.write(0, 1, str(lower))\n        LCD1602.write(3, 1, ' < Point < ')\n        LCD1602.write(13, 1, str(upper))\n\ndef loop():\n    \"\"\"\n    Main game loop for handling keypad input and updating game state.\n    \"\"\"\n    global keypad, last_key_pressed, count\n    while True:\n        result = 0\n        pressed_keys = keypad.read()\n        if pressed_keys and pressed_keys != last_key_pressed:\n            if pressed_keys == [\"A\"]:\n                init_new_value()\n                lcd_show_input(0)\n            elif pressed_keys == [\"D\"]:\n                result = detect_point()\n                lcd_show_input(result)\n            elif pressed_keys[0] in keys:\n                if pressed_keys[0] in [\"A\", \"B\", \"C\", \"D\", \"#\", \"*\"]:\n                    continue\n                count = count * 10 + int(pressed_keys[0])\n                if count >= 10:\n                    result = detect_point()\n                lcd_show_input(result)\n            print(pressed_keys)\n        last_key_pressed = pressed_keys\n        sleep(0.1)\n\ntry:\n    setup()\n    loop()\nexcept KeyboardInterrupt:\n    LCD1602.clear()  # Clear LCD on interrupt\n\n\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.13",
@@ -7645,7 +7795,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.13_GAME_10Second.py",
+    "python_code_pi5": "#!/usr/bin/env python3\n\nfrom gpiozero import OutputDevice, Button\nimport time\nimport threading\n\n# Initialize the button connected to GPIO 26\nsensorPin = Button(26)\n\n# Define GPIO pins connected to the 74HC595 shift register\nSDI = OutputDevice(24)   # Serial Data Input\nRCLK = OutputDevice(23)  # Register Clock\nSRCLK = OutputDevice(18) # Shift Register Clock\n\n# Define GPIO pins for digit selection on the 7-segment display\nplacePin = [OutputDevice(pin) for pin in (10, 22, 27, 17)]\n\n# Define segment codes for numbers 0 to 9 on the 7-segment display\nnumber = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90)\n\n# Counter and timer variables\ncounter = 0\ntimer1 = None\ngameState = 0\n\ndef clearDisplay():\n    \"\"\" Clear all segments on the 7-segment display. \"\"\"\n    for _ in range(8):\n        SDI.on()\n        SRCLK.on()\n        SRCLK.off()\n    RCLK.on()\n    RCLK.off()\n\ndef hc595_shift(data):\n    \"\"\" Shift data to the 74HC595 shift register to display a digit. \"\"\"\n    for i in range(8):\n        SDI.value = 0x80 & (data << i)\n        SRCLK.on()\n        SRCLK.off()\n    RCLK.on()\n    RCLK.off()\n\ndef pickDigit(digit):\n    \"\"\" Select which digit to display on the 7-segment display. \"\"\"\n    for pin in placePin:\n        pin.off()\n    placePin[digit].on()\n\ndef display():\n    \"\"\" Display the current counter value on the 7-segment display. \"\"\"\n    global counter\n    clearDisplay()\n    pickDigit(0)\n    hc595_shift(number[counter % 10])\n\n    clearDisplay()\n    pickDigit(1)\n    hc595_shift(number[counter % 100 // 10])\n\n    clearDisplay()\n    pickDigit(2)\n    hc595_shift(number[counter % 1000 // 100] - 0x80)\n\n    clearDisplay()\n    pickDigit(3)\n    hc595_shift(number[counter % 10000 // 1000])\n\ndef stateChange():\n    \"\"\" Handle state changes for the counter based on button presses. \"\"\"\n    global gameState, counter, timer1\n    if gameState == 0:\n        counter = 0\n        time.sleep(1)\n        timer()\n    elif gameState == 1 and timer1 is not None:\n        timer1.cancel()\n        time.sleep(1)\n    gameState = (gameState + 1) % 2\n\ndef loop():\n    \"\"\" Main loop to check for button presses and update the display. \"\"\"\n    global counter\n    currentState = 0\n    lastState = 0\n    while True:\n        display()\n        currentState = sensorPin.value\n        if (currentState == 0) and (lastState == 1):\n            stateChange()\n        lastState = currentState\n\ndef timer():\n    \"\"\" Timer function that increments the counter every 0.01 second. \"\"\"\n    global counter, timer1\n    timer1 = threading.Timer(0.01, timer)\n    timer1.start()\n    counter += 1\n\ntry:\n    loop()\nexcept KeyboardInterrupt:\n    if timer1:\n        timer1.cancel()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   },
   {
     "id": "3.1.14",
@@ -7871,7 +8025,11 @@ const DAVINCI_LESSONS = [
         "color": "#8b9bb4",
         "text": "Place 7-Seg"
       }
-    ]
+    ],
+    "python_file_pi5": "3.1.14_game_not_not.py",
+    "python_code_pi5": "#!/usr/bin/env python3\nfrom gpiozero import OutputDevice, Button\nimport time\nimport threading\nimport random\n\n# GPIO pins for the 74HC595 shift register\nSDI = OutputDevice(17)   # Serial Data Input\nRCLK = OutputDevice(18)  # Register Clock\nSRCLK = OutputDevice(27) # Shift Register Clock\n\n# GPIO pins for buttons\nAButtonPin = Button(20)  # Button A\nBButtonPin = Button(26)  # Button B\n\n# Game variables initialization\ntimerPlay = 0\ntimerCheck = 0\nwaypoint = \"NULL\"\nstage = \"NULL\"\n\n# Arrow glyphs for LED matrix display\narrow = {\n    \"right\": [0xFF, 0xEF, 0xDF, 0x81, 0xDF, 0xEF, 0xFF, 0xFF],\n    \"left\": [0xFF, 0xF7, 0xFB, 0x81, 0xFB, 0xF7, 0xFF, 0xFF]\n}\n\n# Feedback glyphs for correct/wrong answers\ncheck = {\n    \"wrong\": [0xFF, 0xBB, 0xD7, 0xEF, 0xD7, 0xBB, 0xFF, 0xFF],\n    \"right\": [0xFF, 0xFF, 0xF7, 0xEB, 0xDF, 0xBF, 0xFF, 0xFF]\n}\n\ndef hc595_shift(dat):\n    \"\"\" Shift data to the 74HC595 shift register. \"\"\"\n    for i in range(8):\n        SDI.value = 0x80 & (dat << i)\n        SRCLK.on()\n        SRCLK.off()\n\ndef display(glyphCode):\n    \"\"\" Display a glyph on the LED matrix. \"\"\"\n    for i in range(0, 8):\n        hc595_shift(glyphCode[i])\n        hc595_shift(0x80 >> i)\n        RCLK.on()\n        RCLK.off()\n\ndef creatGlyph():\n    \"\"\" Create a new glyph for the game and start the play timer. \"\"\"\n    global waypoint, stage, timerPlay\n    waypoint = random.choice(list(arrow.keys()))\n    stage = \"PLAY\"\n    timerPlay = threading.Timer(2.0, timeOut)\n    timerPlay.start()\n\ndef checkPoint(inputKey):\n    \"\"\" Check player's input and update game state. \"\"\"\n    global waypoint, stage, timerCheck\n    if inputKey == \"empty\" or inputKey == waypoint:\n        waypoint = \"wrong\"\n    else:\n        waypoint = \"right\"\n    timerPlay.cancel()\n    stage = \"CHECK\"\n    timerCheck = threading.Timer(1.0, creatGlyph)\n    timerCheck.start()\n\ndef timeOut():\n    \"\"\" Handle game timeout scenario. \"\"\"\n    checkPoint(\"empty\")\n\ndef getKey():\n    \"\"\" Detect button press and trigger checkpoint. \"\"\"\n    if AButtonPin.is_pressed and not BButtonPin.is_pressed:\n        checkPoint(\"right\")\n    elif not AButtonPin.is_pressed and BButtonPin.is_pressed:\n        checkPoint(\"left\")\n\ndef main():\n    \"\"\" Main game loop. \"\"\"\n    creatGlyph()\n    while True:\n        if stage == \"PLAY\":\n            display(arrow[waypoint])\n            getKey()\n        elif stage == \"CHECK\":\n            display(check[waypoint])\n\ndef destroy():\n    \"\"\" Clean up resources on program exit. \"\"\"\n    global timerPlay, timerCheck\n    timerPlay.cancel()  # Cancel the play timer\n    timerCheck.cancel()  # Cancel the checkpoint timer\n\n# Run the game, handle KeyboardInterrupt for clean exit\ntry:\n    main()\nexcept KeyboardInterrupt:\n    destroy()\n",
+    "doc_url_pi5": "https://docs.sunfounder.com/projects/davinci-kit/en/latest/for_pi5.html",
+    "hardware_notes_pi5": "Target: Raspberry Pi 5 (RP1 I/O Controller chip). Utilizes official gpiozero library."
   }
 ];
 

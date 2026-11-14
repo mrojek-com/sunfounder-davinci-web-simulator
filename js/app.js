@@ -9,6 +9,7 @@
       this.lessons = global.DAVINCI_LESSONS || [];
       this.currentLesson = null;
       this.activeTab = 'workbench'; // 'workbench', 'wiring', 'schematic', 'video', 'pinout', 'code'
+      this.activeHardware = 'pi2b'; // 'pi2b' (RPi.GPIO) or 'pi5' (gpiozero)
     }
 
     init() {
@@ -66,9 +67,16 @@
         ytTitle: document.getElementById('yt-video-title'),
         ytLink: document.getElementById('yt-external-link'),
 
+        // Hardware Architecture Switcher
+        hwBtnPi2b: document.getElementById('hw-btn-pi2b'),
+        hwBtnPi5: document.getElementById('hw-btn-pi5'),
+
         // Code Editor
         codeTextarea: document.getElementById('python-code-editor'),
         btnResetCode: document.getElementById('btn-reset-code'),
+        editorHwBadge: document.getElementById('editor-hw-badge'),
+        editorFilenameText: document.getElementById('editor-filename-text'),
+        btnOpenDoc: document.getElementById('btn-open-doc'),
 
         // Terminal
         terminalBody: document.getElementById('terminal-logs'),
@@ -122,12 +130,65 @@
       // Update Media Tabs
       this.updateMediaTabs(lesson);
 
-      // Populate Code Editor
-      if (this.dom.codeTextarea) {
-        this.dom.codeTextarea.value = lesson.python_code || '# No Python code available for this lesson';
-      }
+      // Populate Code Editor & Metadata for Active Hardware
+      this.updateEditorForHardware();
 
       this.logTerminal('info', `Switched to Lesson ${lesson.id}: ${lesson.title}`);
+    }
+
+    setHardware(hw) {
+      if (hw !== 'pi2b' && hw !== 'pi5') return;
+      this.activeHardware = hw;
+
+      // Update button toggle classes
+      if (this.dom.hwBtnPi2b) this.dom.hwBtnPi2b.classList.toggle('active', hw === 'pi2b');
+      if (this.dom.hwBtnPi5) this.dom.hwBtnPi5.classList.toggle('active', hw === 'pi5');
+
+      // Update Breadboard SVG title & subtitle
+      if (global.BreadboardView && typeof global.BreadboardView.setHardwareModel === 'function') {
+        global.BreadboardView.setHardwareModel(hw);
+      }
+
+      // Update Code Editor, badges, and documentation URLs
+      this.updateEditorForHardware();
+
+      const hwLabel = hw === 'pi5' ? 'Raspberry Pi 5 (gpiozero stack)' : 'Raspberry Pi 2B / 3 / 4 (RPi.GPIO stack)';
+      this.logTerminal('info', `Target architecture switched to: ${hwLabel}`);
+    }
+
+    updateEditorForHardware() {
+      if (!this.currentLesson) return;
+      const isPi5 = this.activeHardware === 'pi5';
+
+      // Update Badge
+      if (this.dom.editorHwBadge) {
+        this.dom.editorHwBadge.textContent = isPi5 ? '🚀 Pi 5 (gpiozero)' : '🍓 Pi 2B/3/4 (RPi.GPIO)';
+        this.dom.editorHwBadge.className = isPi5 ? 'hw-badge-text pi5' : 'hw-badge-text pi2b';
+      }
+
+      // Update Filename
+      if (this.dom.editorFilenameText) {
+        const fname = isPi5 
+          ? (this.currentLesson.python_file_pi5 || this.currentLesson.python_file || 'main.py')
+          : (this.currentLesson.python_file || 'main.py');
+        this.dom.editorFilenameText.textContent = fname;
+      }
+
+      // Update Documentation URL
+      if (this.dom.btnOpenDoc) {
+        const docUrl = (isPi5 && this.currentLesson.doc_url_pi5)
+          ? this.currentLesson.doc_url_pi5
+          : (this.currentLesson.url || 'https://docs.sunfounder.com/projects/davinci-kit/en/latest/');
+        this.dom.btnOpenDoc.href = docUrl;
+      }
+
+      // Populate Python Code
+      if (this.dom.codeTextarea) {
+        const code = isPi5
+          ? (this.currentLesson.python_code_pi5 || this.currentLesson.python_code || '# No Python code available for Pi 5')
+          : (this.currentLesson.python_code || '# No Python code available');
+        this.dom.codeTextarea.value = code;
+      }
     }
 
     loadCreativeConcept(concept) {
@@ -191,6 +252,13 @@
       // Update Code Editor
       if (this.dom.codeTextarea) {
         this.dom.codeTextarea.value = customLesson.python_code;
+      }
+      if (this.dom.editorHwBadge) {
+        this.dom.editorHwBadge.textContent = '💡 Creative Lab Prototype';
+        this.dom.editorHwBadge.className = 'hw-badge-text pi5';
+      }
+      if (this.dom.editorFilenameText) {
+        this.dom.editorFilenameText.textContent = `${concept.id || 'creative_prototype'}.py`;
       }
 
       // Switch to Workbench Tab
@@ -329,10 +397,23 @@
       if (this.dom.btnResetCode) {
         this.dom.btnResetCode.onclick = () => {
           if (this.currentLesson && this.dom.codeTextarea) {
-            this.dom.codeTextarea.value = this.currentLesson.python_code || '';
-            this.logTerminal('info', 'Code editor reset to SunFounder official code.');
+            const isPi5 = this.activeHardware === 'pi5';
+            const code = isPi5
+              ? (this.currentLesson.python_code_pi5 || this.currentLesson.python_code || '')
+              : (this.currentLesson.python_code || '');
+            this.dom.codeTextarea.value = code;
+            const targetArch = isPi5 ? 'Pi 5 (gpiozero)' : 'Pi 2B / 3 / 4 (RPi.GPIO)';
+            this.logTerminal('info', `Code editor reset to official SunFounder ${targetArch} code.`);
           }
         };
+      }
+
+      // Target Hardware Architecture Switcher
+      if (this.dom.hwBtnPi2b) {
+        this.dom.hwBtnPi2b.onclick = () => this.setHardware('pi2b');
+      }
+      if (this.dom.hwBtnPi5) {
+        this.dom.hwBtnPi5.onclick = () => this.setHardware('pi5');
       }
 
       // Clear terminal

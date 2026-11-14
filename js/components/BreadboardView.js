@@ -89,6 +89,18 @@
       this.updateMultimeter();
     }
 
+    setHardwareModel(hw) {
+      this.hardwareModel = hw;
+      const titleEl = document.getElementById('svg-board-title');
+      const subEl = document.getElementById('svg-board-subtitle');
+      if (titleEl) {
+        titleEl.textContent = hw === 'pi5' ? 'Raspberry Pi 5' : 'Raspberry Pi 2B';
+      }
+      if (subEl) {
+        subEl.textContent = hw === 'pi5' ? 'BCM2712 + RP1 • 40-Pin GPIO' : 'BCM2836 • 40-Pin GPIO';
+      }
+    }
+
     setViewMode(mode) {
       this.viewMode = mode;
       if (!this.container) return;
@@ -179,8 +191,8 @@
                 <!-- 1. Raspberry Pi 2 Model B PCB (Left) -->
                 <g id="rpi-board-group">
                   <rect x="12" y="26" width="170" height="422" rx="14" fill="url(#pcbGreen)" stroke="#2e7d32" stroke-width="2"/>
-                  <text x="22" y="48" fill="#ffffff" font-family="monospace" font-size="11" font-weight="bold">Raspberry Pi 2B</text>
-                  <text x="22" y="62" fill="#81c784" font-family="sans-serif" font-size="9">BCM2836 • 40-Pin GPIO</text>
+                  <text id="svg-board-title" x="22" y="48" fill="#ffffff" font-family="monospace" font-size="11" font-weight="bold">Raspberry Pi 2B</text>
+                  <text id="svg-board-subtitle" x="22" y="62" fill="#81c784" font-family="sans-serif" font-size="9">BCM2836 • 40-Pin GPIO</text>
 
                   <!-- USB & Ethernet Cutouts -->
                   <rect x="164" y="60" width="22" height="58" rx="2" fill="#cfd8dc" stroke="#90a4ae"/>

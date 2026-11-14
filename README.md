@@ -62,10 +62,13 @@ Simulate circuits, test Python code, inspect official breadboard wiring diagrams
 - **Tutorial Videos**: Embedded Paul McWhorter / SunFounder YouTube lessons for every topic.
 - **Raspberry Pi 2B 40-Pin Pinout Table**: Complete pin reference guide with BCM, Physical pin, WiringPi, and safety invariants.
 
-### 5. In-Browser Python Code Playground
-- Embedded syntax-highlighted code editor pre-loaded with official SunFounder Python scripts (`1.1.1_BlinkingLed.py` through `3.1.14_GAME_NotNot.py`).
-- Virtual asynchronous Python execution engine implementing `RPi.GPIO`, `ADC0834`, `LCD1602`, `time.sleep()`, and `math`.
-- Live stdout execution terminal with timestamps.
+### 5. In-Browser Python Code Playground & Dual Hardware Architectures
+- **Target Hardware Architecture Toggle**:
+  - **🍓 Raspberry Pi 2B / 3 / 4 (`RPi.GPIO` stack)**: Direct BCM/BOARD register-level control with PWM duty cycles (0..100%).
+  - **🚀 Raspberry Pi 5 (`gpiozero` stack)**: Modern RP1 I/O controller object model with normalized float tuples, `LED`, `RGBLED`, `Button`, `Buzzer`, `Motor`, `Servo`, `DistanceSensor`, and event hooks matching SunFounder's official Pi 5 curriculum.
+- **Embedded Syntax Editor**: Pre-loaded with official SunFounder Python scripts for all 39 lessons (`1.1.1` through `3.1.14`) across both target architectures.
+- **Virtual Asynchronous Python Engine**: Emulates `RPi.GPIO`, `gpiozero`, `ADC0834`, `LCD1602`, `time.sleep()`, and `math` in browser without native dependencies.
+- **Live Output Terminal**: Real-time stdout logging with timestamps and colored severity tags.
 
 ### 6. 💡 Creative Lab & Local LLM Brainstorming Studio
 - **Multi-Sensor Mashup Palette**: Select 2–5 components from the kit and let the local LLM brainstorm novel embedded system inventions.

@@ -316,12 +316,55 @@ for i in range(2):
     assert.ok(printed.some(p => p.includes('Test 4')));
   });
 
+  await testAsync('Python runner executes Lesson 1.1.2 RGB LED (RPi.GPIO stack) without unexpected identifier exception', async () => {
+    const runner = new PythonSimulatorRunner();
+    runner.setSpeed(10.0);
+    const l112 = DAVINCI_LESSONS.find(l => l.id === '1.1.2');
+    assert.ok(l112, 'Lesson 1.1.2 must exist');
+
+    let printed = [];
+    let errorCaught = null;
+    runner.onOutput((type, text) => {
+      if (type === 'stdout') printed.push(text);
+      if (type === 'error') errorCaught = text;
+    });
+
+    // Run first 50ms and cancel cleanly
+    const runPromise = runner.runCode(l112.python_code);
+    setTimeout(() => { runner.stop(); }, 60);
+    await runPromise;
+
+    assert.strictEqual(errorCaught, null, `Should execute 1.1.2 without exception, but got: ${errorCaught}`);
+    assert.ok(printed.some(p => p.includes('color_msg:')), 'Must print color messages during execution');
+  });
+
+  await testAsync('Python runner executes Pi 5 Lesson 1.1.2 RGB LED (gpiozero stack) with color assignment', async () => {
+    const runner = new PythonSimulatorRunner();
+    runner.setSpeed(10.0);
+    const l112 = DAVINCI_LESSONS.find(l => l.id === '1.1.2');
+    assert.ok(l112 && l112.python_code_pi5, 'Lesson 1.1.2 Pi 5 code must exist');
+
+    let printed = [];
+    let errorCaught = null;
+    runner.onOutput((type, text) => {
+      if (type === 'stdout') printed.push(text);
+      if (type === 'error') errorCaught = text;
+    });
+
+    const runPromise = runner.runCode(l112.python_code_pi5);
+    setTimeout(() => { runner.stop(); }, 60);
+    await runPromise;
+
+    assert.strictEqual(errorCaught, null, `Should execute 1.1.2 Pi 5 without exception, but got: ${errorCaught}`);
+    assert.ok(printed.some(p => p.includes('Color set to:')), 'Must output Color set to: from gpiozero script');
+  });
+
   // ==========================================
   // 6. LESSONS DATABASE INTEGRITY
   // ==========================================
   console.log('\n--- 6. LESSONS DATABASE INTEGRITY ---');
 
-  test('All 39 official lessons exist and have valid structure', () => {
+  test('All 39 official lessons exist and have dual architecture (Pi 2/3/4 + Pi 5)', () => {
     assert.strictEqual(DAVINCI_LESSONS.length, 39, 'Must have 39 complete lessons');
     DAVINCI_LESSONS.forEach(l => {
       assert.ok(l.id, 'Lesson ID missing');
@@ -331,6 +374,9 @@ for i in range(2):
       assert.ok(l.slug, `Lesson ${l.id} slug missing`);
       assert.ok(l.python_file, `Lesson ${l.id} python_file missing`);
       assert.ok(l.python_code && l.python_code.length > 50, `Lesson ${l.id} python code empty or too short`);
+      assert.ok(l.python_file_pi5, `Lesson ${l.id} Pi 5 python_file missing`);
+      assert.ok(l.python_code_pi5 && l.python_code_pi5.length > 50, `Lesson ${l.id} Pi 5 python code empty or too short`);
+      assert.ok(l.doc_url_pi5, `Lesson ${l.id} doc_url_pi5 missing`);
       assert.ok(l.youtube_id, `Lesson ${l.id} youtube_id missing`);
     });
   });

@@ -15,7 +15,7 @@
       <span class="rpi-icon">🍓</span>
       <div class="brand-text">
         <h1>SunFounder DaVinci Kit Web Simulator</h1>
-        <div class="brand-sub">Hardware Emulation Studio for Raspberry Pi 2 Model B</div>
+        <div class="brand-sub">Hardware Emulation Studio for Raspberry Pi 2B / 3 / 4 &amp; Pi 5</div>
       </div>
     </div>
 
@@ -74,6 +74,19 @@
         <span>⏹</span> Stop (Esc)
       </button>
       <span class="status-badge idle" id="run-status-badge">IDLE</span>
+    </div>
+
+    <!-- Target Hardware Architecture Switcher (Pi 2B/3/4 vs Pi 5) -->
+    <div class="hardware-switch-group">
+      <span class="hw-switch-label">Target Architecture:</span>
+      <div class="hw-btn-group" role="group" aria-label="Hardware Architecture Selection">
+        <button class="hw-toggle-btn active" id="hw-btn-pi2b" data-hw="pi2b" title="Raspberry Pi 2B / 3 / 4 (Broadcom BCM2836 + RPi.GPIO stack)">
+          <span class="hw-tag-icon">🍓</span> Pi 2B / 3 / 4 <span class="hw-lib-pill">RPi.GPIO</span>
+        </button>
+        <button class="hw-toggle-btn" id="hw-btn-pi5" data-hw="pi5" title="Raspberry Pi 5 (Broadcom BCM2712 + RP1 I/O Controller + gpiozero stack)">
+          <span class="hw-tag-icon">🚀</span> Pi 5 <span class="hw-lib-pill">gpiozero</span>
+        </button>
+      </div>
     </div>
 
     <div class="speed-wrap">
@@ -199,12 +212,17 @@
     <section class="tab-panel" id="tab-code">
       <div class="code-tab-layout">
         <div class="editor-toolbar">
-          <div class="editor-filename">
-            <span>📄</span> SunFounder Official Python Source Code
+          <div class="editor-filename" id="editor-filename-badge">
+            <span>📄</span> <span id="editor-hw-badge" class="hw-badge-text">🍓 Pi 2B/3/4 (RPi.GPIO)</span>: <code id="editor-filename-text">1.1.1_BlinkingLed.py</code>
           </div>
-          <button class="btn btn-sm" id="btn-reset-code">
-            <span>↺</span> Reset to Default
-          </button>
+          <div class="editor-right-tools">
+            <a id="btn-open-doc" class="btn btn-sm btn-outline" href="https://docs.sunfounder.com/projects/davinci-kit/en/latest/" target="_blank" rel="noopener noreferrer">
+              <span>📖</span> Official Docs ↗
+            </a>
+            <button class="btn btn-sm" id="btn-reset-code">
+              <span>↺</span> Reset to Default
+            </button>
+          </div>
         </div>
         <textarea id="python-code-editor" class="code-textarea" spellcheck="false" placeholder="# Enter Python code here..."></textarea>
       </div>
